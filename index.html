@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -7,188 +6,478 @@
     <title>أجندة م. عبدالمحسن اللويم</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         :root {
             --bg-color: #f0f4f8; --sidebar-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b;
             --border-color: #1e293b; --card-bg: #ffffff; --card-border: #e2e8f0; --accent-color: #f8fafc;
             --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --info: #3b82f6;
+            --grad-primary: linear-gradient(135deg, #1e293b, #475569);
+            --grad-danger: linear-gradient(135deg, #ef4444, #f97316);
+            --grad-warning: linear-gradient(135deg, #f59e0b, #fbbf24);
+            --grad-info: linear-gradient(135deg, #3b82f6, #06b6d4);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a; --sidebar-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8;
+            --border-color: #f8fafc; --card-bg: #1e293b; --card-border: #334155; --accent-color: #334155;
+            --grad-primary: linear-gradient(135deg, #f8fafc, #cbd5e1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; transition: background-color 0.3s, color 0.3s, border-color 0.2s; }
         body { background-color: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
-        
-        .sidebar { width: 280px; background-color: var(--sidebar-bg); border-left: 1px solid var(--card-border); padding: 30px 20px; display: flex; flex-direction: column; z-index: 10; box-shadow: -4px 0 15px rgba(0,0,0,0.02); }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        .mobile-header { display: none; justify-content: space-between; align-items: center; background: var(--sidebar-bg); padding: 12px 20px; border-bottom: 1px solid var(--card-border); position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .mobile-header h3 { font-weight: 900; color: var(--border-color); font-size: 1.2rem; }
+        .mobile-header p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .mobile-tools button { background: var(--bg-color); border: 1px solid var(--card-border); border-radius: 10px; padding: 6px 10px; cursor: pointer; color: var(--text-main); margin-right: 5px; font-size: 1.1rem; }
+
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); border-left: 1px solid var(--card-border); padding: 30px 20px; display: flex; flex-direction: column; box-shadow: -4px 0 15px rgba(0,0,0,0.02); z-index: 10; }
         .brand { text-align: center; margin-bottom: 30px; }
-        .brand h2 { font-size: 1.4rem; color: var(--border-color); font-weight: 900; line-height: 1.3;}
+        .brand h2 { font-size: 1.4rem; color: var(--border-color); font-weight: 900; letter-spacing: -0.5px; line-height: 1.3;}
         .brand p { font-size: 0.85rem; color: var(--text-muted); font-weight: 700; margin-top: 5px; }
-        
-        .nav-btn { background: transparent; color: var(--text-main); border: 1.5px solid transparent; padding: 12px 15px; border-radius: 14px; cursor: pointer; text-align: right; font-weight: 800; margin-bottom: 8px; width: 100%; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+
+        .nav-btn { background: transparent; color: var(--text-main); border: 1.5px solid transparent; padding: 12px 15px; border-radius: 14px; cursor: pointer; text-align: right; font-weight: 800; font-size: 0.95rem; margin-bottom: 8px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 8px; white-space: nowrap; }
         .nav-btn:hover { background-color: var(--accent-color); transform: translateX(-4px); }
         .nav-btn.active { background-color: var(--border-color); color: var(--bg-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        
-        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; scroll-behavior: smooth; }
-        .tab-content { display: none; animation: fadeIn 0.4s; }
+        .tools-section { margin-top: auto; border-top: 1px solid var(--card-border); padding-top: 15px; }
+
+        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; position: relative; scroll-behavior: smooth; }
+        .pdf-container { background: var(--bg-color); padding: 10px; border-radius: 10px; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
         .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 20px; }
         .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
-        .card-header h3 { font-size: 1.2rem; color: var(--border-color); font-weight: 900; margin-bottom: 15px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; }
+        .card-header h3 { font-size: 1.2rem; color: var(--border-color); font-weight: 900; }
+
+        .stat-box { flex: 1; min-width: 120px; padding: 20px; border: 1.5px solid var(--card-border); border-radius: 16px; text-align: center; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.01); transition: transform 0.2s;}
+        .stat-box:hover { transform: translateY(-3px); border-color: var(--border-color); }
+        .stat-num { font-size: 2.6rem; font-weight: 900; margin-bottom: 5px; line-height: 1; background: var(--grad-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-num.danger { background: var(--grad-danger); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-num.warning { background: var(--grad-warning); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-num.info { background: var(--grad-info); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-title { font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;}
+
+        .input-group { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap; }
+        input, select, textarea { flex: 1; min-width: 150px; padding: 12px 16px; border: 1.5px solid var(--card-border); border-radius: 12px; outline: none; font-size: 1rem; font-weight: 700; background: var(--accent-color); color: var(--text-main); transition: 0.2s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--border-color); background: var(--card-bg); box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05); }
+        textarea { resize: vertical; min-height: 90px; width: 100%; margin-bottom: 15px;}
+
+        .btn-action { background: transparent; color: var(--text-main); border: 2px solid var(--border-color); padding: 10px 24px; border-radius: 25px; cursor: pointer; font-weight: 900; font-size: 0.95rem; transition: 0.2s; width: 100%; }
+        .btn-action:active { transform: scale(0.96); }
+        .btn-action:hover { background: var(--border-color); color: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         
+        .btn-small { padding: 6px 14px; font-size: 0.85rem; width: auto; border-width: 1.5px;}
+        .btn-danger { border-color: var(--danger); color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: #fff; }
+        .btn-success { border-color: var(--success); color: var(--success); }
+        .btn-success:hover { background: var(--success); color: #fff; }
+
         ul.data-list { list-style: none; }
-        ul.data-list li { padding: 15px; border: 1px solid var(--card-border); border-radius: 14px; margin-bottom: 12px; background: var(--card-bg); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; transition: 0.2s; }
+        ul.data-list li { padding: 15px; border: 1px solid var(--card-border); border-radius: 14px; margin-bottom: 12px; background: var(--card-bg); display: flex; justify-content: space-between; align-items: center; transition: 0.2s; gap: 10px; flex-wrap: wrap; }
         ul.data-list li:hover { border-color: var(--text-muted); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         
         .item-details { flex: 1; min-width: 200px; }
         .item-title { font-weight: 900; margin-bottom: 4px; color: var(--border-color); font-size: 1.05rem;}
         .item-meta { font-size: 0.85rem; color: var(--text-muted); font-weight: 700; line-height: 1.5;}
-        .badge { padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: 900; border: 1px solid var(--border-color); display:inline-block; }
-        .badge-success { border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.1); }
-        .badge-warning { border-color: var(--warning); color: var(--warning); background: rgba(245, 158, 11, 0.1); }
-        .badge-info { border-color: var(--info); color: var(--info); background: rgba(59, 130, 246, 0.1); }
         
+        .badge { padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: 900; border: 1px solid var(--border-color); display:inline-block; margin-bottom: 3px;}
+        .badge-danger { border-color: var(--danger); color: var(--danger); background: rgba(239, 68, 68, 0.1); }
+        .badge-warning { border-color: var(--warning); color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+        .badge-success { border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.1); }
+        .badge-info { border-color: var(--info); color: var(--info); background: rgba(59, 130, 246, 0.1); }
+
+        .completed-task { opacity: 0.7; }
+        .completed-task .item-title { text-decoration: line-through; }
+
+        .insight-box { background: rgba(16, 185, 129, 0.05); border: 2px solid var(--success); color: var(--success); padding: 18px; border-radius: 16px; font-weight: 800; margin-top: 20px; font-size: 1.05rem; display: flex; align-items: center; gap: 10px; }
+        .chart-container { position: relative; height: 280px; width: 100%; display: flex; justify-content: center; align-items: center;}
+        
+        .toast-container { position: fixed; bottom: 90px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;}
+        .toast { background: var(--border-color); color: var(--bg-color); padding: 14px 24px; border-radius: 12px; font-weight: 800; opacity: 0; transform: translateY(20px); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.3s forwards 2.5s; box-shadow: 0 10px 25px rgba(0,0,0,0.15);}
+        @keyframes popIn { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
+
         @media (max-width: 850px) {
             body { flex-direction: column; }
-            .sidebar { width: 100%; height: 75px; flex-direction: row; position: fixed; bottom: 0; overflow-x: auto; padding: 5px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
-            .brand { display: none; }
-            .nav-btn { flex: 0 0 auto; text-align: center; padding: 10px 18px; border-radius: 20px; font-size: 0.9rem; }
-            .main-content { padding: 15px; padding-bottom: 90px; }
+            .mobile-header { display: flex; }
+            .sidebar { width: 100%; height: 75px; flex-direction: row; padding: 5px; position: fixed; bottom: 0; left: 0; border-top: 1px solid var(--card-border); border-left: none; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); overflow-x: auto; overflow-y: hidden; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .sidebar::-webkit-scrollbar { display: none; }
+            .brand, .tools-section { display: none; }
+            .nav-btn { flex: 0 0 auto; text-align: center; padding: 10px 18px; margin: 0 4px; font-size: 0.9rem; border-radius: 20px; border: none; background: var(--bg-color); }
+            .nav-btn.active { box-shadow: none; transform: scale(1.05); }
+            .main-content { padding: 15px; padding-top: 85px; padding-bottom: 90px; }
+            .card-grid { grid-template-columns: 1fr; }
+            .card { padding: 15px; }
+            .stat-box { min-width: 45%; padding: 15px; }
+            .stat-num { font-size: 2.2rem; }
+            .input-group { flex-direction: column; gap: 10px;}
+            input, select, textarea { width: 100%; min-width: 100%; }
+            .btn-action { width: 100%; padding: 12px; }
+            ul.data-list li { flex-direction: column; align-items: flex-start; }
+            .list-actions { display: flex; width: 100%; gap: 10px; margin-top: 10px; }
+            .list-actions button { flex: 1; }
         }
     </style>
 </head>
 <body>
+    <div class="toast-container" id="toast-container"></div>
+    <input type="file" id="import-file" style="display:none" accept=".json" onchange="importBackup(event)">
+
+    <header class="mobile-header">
+        <div class="mobile-brand">
+            <h3>أجندة م. عبدالمحسن اللويم</h3>
+            <p id="live-time-mobile">جاري التحميل...</p>
+        </div>
+        <div class="mobile-tools">
+            <button onclick="document.getElementById('import-file').click()" title="استيراد">📂</button>
+            <button onclick="toggleDarkMode()">🌓</button>
+            <button onclick="exportToPDF()">📥</button>
+        </div>
+    </header>
 
     <aside class="sidebar">
         <div class="brand">
             <h2>أجندة<br>م. عبدالمحسن اللويم</h2>
             <p id="live-time">جاري التحميل...</p>
         </div>
+        
         <button class="nav-btn active" onclick="switchTab('tab-dashboard')">📊 المؤشرات</button>
-        <button class="nav-btn" onclick="switchTab('tab-active')">🟢 المهام القائمة</button>
+        <button class="nav-btn" onclick="switchTab('tab-routing')">🔄 المعاملات</button>
+        <button class="nav-btn" onclick="switchTab('tab-time')">📅 الاجتماعات</button>
+        <button class="nav-btn" onclick="switchTab('tab-actions')">✅ القرارات</button>
+        <button class="nav-btn" onclick="switchTab('tab-admin')">🗂️ الأرشيف</button>
+        <button class="nav-btn" onclick="switchTab('tab-contact')">📞 الزوار</button>
         <button class="nav-btn" onclick="switchTab('tab-history')">🏛️ السجل التاريخي</button>
+        
+        <div class="tools-section">
+            <button class="nav-btn" onclick="document.getElementById('import-file').click()" style="width: 100%; justify-content: center; font-size: 0.85rem;">استيراد بيانات 📂</button>
+            <button class="nav-btn" onclick="exportBackup()" style="width: 100%; justify-content: center; font-size: 0.85rem;">نسخة احتياطية 💾</button>
+            <button class="nav-btn" onclick="toggleDarkMode()" style="width: 100%; justify-content: center; font-size: 0.85rem;">الوضع الليلي 🌓</button>
+            <button class="btn-action" onclick="exportToPDF()" style="margin-top: 10px;">تصدير التقرير 📥</button>
+        </div>
     </aside>
 
-    <main class="main-content">
-        <div id="tab-dashboard" class="tab-content active">
-            <div class="card-grid">
-                <div class="card" style="grid-column: 1 / -1;">
-                    <div class="card-header"><h3>ملخص إنجازات المكتب</h3></div>
-                    <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
-                        <canvas id="activityChart"></canvas>
+    <main class="main-content" id="report-content">
+        <div class="pdf-container">
+            <div id="tab-dashboard" class="tab-content active">
+                <div class="card-grid">
+                    <div class="card" style="grid-column: 1 / -1;">
+                        <div class="card-header"><h3>ملخص العمليات الحي</h3></div>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                            <div class="stat-box"><div class="stat-num" id="count-meetings">0</div><div class="stat-title">اجتماعات ومواعيد</div></div>
+                            <div class="stat-box"><div class="stat-num" id="count-docs">0</div><div class="stat-title">مستندات مؤرشفة</div></div>
+                            <div class="stat-box" style="border-color: rgba(59, 130, 246, 0.3);"><div class="stat-num info" id="count-contacts">0</div><div class="stat-title" style="color: var(--info);">زوار واتصالات</div></div>
+                            <div class="stat-box" style="border-color: rgba(245, 158, 11, 0.3);"><div class="stat-num warning" id="count-pending-actions">0</div><div class="stat-title" style="color: var(--warning);">قرارات قيد التنفيذ</div></div>
+                            <div class="stat-box" style="border-color: rgba(239, 68, 68, 0.3);"><div class="stat-num danger" id="count-pending-routes">0</div><div class="stat-title" style="color: var(--danger);">معاملات عالقة</div></div>
+                        </div>
+                        <div id="ai-insight" class="insight-box">⏳ بانتظار إدخال البيانات...</div>
+                    </div>
+                    <div class="card" style="grid-column: 1 / -1;"><div class="card-header"><h3>التوزيع البياني</h3></div><div class="chart-container"><canvas id="activityChart"></canvas></div></div>
+                </div>
+            </div>
+
+            <div id="tab-routing" class="tab-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header"><h3>إرسال معاملة للمتابعة</h3></div>
+                        <div class="input-group"><input type="text" id="route-title" placeholder="موضوع المعاملة..."></div>
+                        <div class="input-group">
+                            <select id="route-dept"><option value="المالية">المالية</option><option value="المشتريات">المشتريات</option><option value="الموارد البشرية">الموارد البشرية</option><option value="الأمن والسلامة">الأمن والسلامة</option><option value="الإدارة العليا">الإدارة العليا</option></select>
+                            <input type="date" id="route-date">
+                        </div>
+                        <button class="btn-action" onclick="addRouting()">تسجيل وإرسال للمتابعة</button>
+                    </div>
+                    <div class="card"><div class="card-header"><h3>المعاملات العالقة</h3></div><ul class="data-list" id="routing-list" style="max-height: 400px; overflow-y: auto;"></ul></div>
+                </div>
+            </div>
+
+            <div id="tab-time" class="tab-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header"><h3>جدولة اجتماع جديد</h3></div>
+                        <div class="input-group"><input type="date" id="meet-date" style="flex: 1;"><input type="time" id="meet-time" style="flex: 1;"></div>
+                        <div class="input-group"><input type="text" id="meet-title" placeholder="عنوان الاجتماع..." style="width: 100%;"></div>
+                        <textarea id="meet-agenda" placeholder="أجندة الاجتماع..."></textarea>
+                        <button class="btn-action" onclick="addMeeting()">تأكيد الموعد</button>
+                    </div>
+                    <div class="card"><div class="card-header"><h3>أجندة المواعيد</h3></div><ul class="data-list" id="meetings-list"></ul></div>
+                </div>
+            </div>
+
+            <div id="tab-actions" class="tab-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header"><h3>تسجيل قرار أو توصية</h3></div>
+                        <div class="input-group"><input type="text" id="action-desc" placeholder="نص القرار..."></div>
+                        <div class="input-group"><input type="text" id="action-person" placeholder="المسؤول..."><input type="date" id="action-date"></div>
+                        <button class="btn-action" onclick="addAction()">حفظ التوصية</button>
+                    </div>
+                    <div class="card"><div class="card-header"><h3>سجل المتابعة</h3></div><ul class="data-list" id="actions-list" style="max-height: 400px; overflow-y: auto;"></ul></div>
+                </div>
+            </div>
+
+            <div id="tab-admin" class="tab-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header"><h3>أرشفة مستند</h3></div>
+                        <div class="input-group">
+                            <select id="doc-type"><option value="خطاب صادر">خطاب صادر</option><option value="تقرير فني">تقرير فني</option><option value="مذكرة داخلية">مذكرة داخلية</option></select>
+                            <input type="text" id="doc-title" placeholder="عنوان المستند...">
+                        </div>
+                        <textarea id="doc-notes" placeholder="ملاحظات..."></textarea>
+                        <button class="btn-action" onclick="archiveDoc()">إيداع في الأرشيف</button>
+                    </div>
+                    <div class="card"><div class="card-header"><h3>بحث</h3></div><input type="text" id="search-archive" placeholder="بحث..." oninput="filterArchive()" style="margin-bottom:15px; border-radius:25px; width:100%;"><ul class="data-list" id="archive-list" style="max-height: 300px; overflow-y: auto;"></ul></div>
+                </div>
+            </div>
+
+            <div id="tab-contact" class="tab-content">
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="card-header"><h3>تسجيل زائر أو اتصال</h3></div>
+                        <div class="input-group">
+                            <select id="contact-type"><option value="مكالمة واردة">مكالمة واردة</option><option value="زائر مكتبي">زائر مكتبي</option></select>
+                            <input type="text" id="contact-name" placeholder="الاسم والجهة...">
+                        </div>
+                        <input type="text" id="contact-purpose" placeholder="السبب..." style="margin-bottom: 15px; width:100%;">
+                        <button class="btn-action" onclick="addContact()">تسجيل زائر / اتصال</button>
+                    </div>
+                    <div class="card"><div class="card-header"><h3>سجل اليوم</h3></div><ul class="data-list" id="contacts-list"></ul></div>
+                </div>
+            </div>
+
+            <div id="tab-history" class="tab-content">
+                <div class="card-grid">
+                    <div class="card" style="grid-column: 1 / -1;">
+                        <div class="card-header"><h3>🏛️ السجل التاريخي للأعمال المنجزة</h3></div>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; font-weight: bold; margin-bottom: 15px;">
+                            هذا الأرشيف يحتوي تلقائياً على كافة القرارات والمعاملات التي تم التأشير عليها كـ "مُنجزة".
+                        </p>
+                        <ul class="data-list" id="history-list" style="max-height: 400px; overflow-y: auto;"></ul>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div id="tab-active" class="tab-content">
-            <div class="card-grid">
-                <div class="card" style="grid-column: 1 / -1;">
-                    <div class="card-header"><h3>قرارات ومعاملات قيد التنفيذ</h3></div>
-                    <ul class="data-list" id="active-list"></ul>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-history" class="tab-content">
-            <div class="card-grid">
-                <div class="card" style="grid-column: 1 / -1;">
-                    <div class="card-header"><h3>🏛️ السجل التاريخي للأعمال المنجزة</h3></div>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: bold; margin-bottom: 15px;">
-                        يحتوي هذا السجل على كافة القرارات والمعاملات التي تم إغلاقها، مرتبة كمرجع تاريخي لمدير الموقع.
-                    </p>
-                    <ul class="data-list" id="history-list"></ul>
-                </div>
-            </div>
         </div>
     </main>
 
     <script>
-        // حقن البيانات من بايثون
-        const dbData = {"sysMeetings": [], "sysRouting": [], "sysActions": [], "sysDocs": [], "sysContacts": []};
+        // --- 🤖 تقنية الـ SSG الذكية للتزامن مع جيت هب ---
+        const injectedData = {"sysMeetings": [], "sysRouting": [], "sysActions": [], "sysDocs": [], "sysContacts": []};
+        
+        // إذا كان الموقع يُفتح من رابط الإنترنت (جيت هب)، قم بتغذية الـ LocalStorage فوراً من ملفات البايثون
+        if (window.location.hostname.includes("github.io") && injectedData && Object.keys(injectedData).length > 0) {
+            if(injectedData.sysMeetings) localStorage.setItem('sysMeetings', typeof injectedData.sysMeetings === 'string' ? injectedData.sysMeetings : JSON.stringify(injectedData.sysMeetings));
+            if(injectedData.sysRouting) localStorage.setItem('sysRouting', typeof injectedData.sysRouting === 'string' ? injectedData.sysRouting : JSON.stringify(injectedData.sysRouting));
+            if(injectedData.sysActions) localStorage.setItem('sysActions', typeof injectedData.sysActions === 'string' ? injectedData.sysActions : JSON.stringify(injectedData.sysActions));
+            if(injectedData.sysDocs) localStorage.setItem('sysDocs', typeof injectedData.sysDocs === 'string' ? injectedData.sysDocs : JSON.stringify(injectedData.sysDocs));
+            if(injectedData.sysContacts) localStorage.setItem('sysContacts', typeof injectedData.sysContacts === 'string' ? injectedData.sysContacts : JSON.stringify(injectedData.sysContacts));
+            if(injectedData.theme) { localStorage.setItem('theme', injectedData.theme); document.documentElement.setAttribute('data-theme', injectedData.theme); }
+        }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-            window.scrollTo(0,0);
+        const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+        if (currentTheme) { document.documentElement.setAttribute('data-theme', currentTheme); }
+        
+        function toggleDarkMode() {
+            let theme = document.documentElement.getAttribute('data-theme');
+            if (theme === 'dark') { document.documentElement.setAttribute('data-theme', 'light'); localStorage.setItem('theme', 'light'); } 
+            else { document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('theme', 'dark'); }
+            updateChart(); 
         }
 
         function updateTime() {
             const now = new Date();
-            document.getElementById('live-time').textContent = now.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const timeStr = now.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + " | " + now.toLocaleTimeString('ar-SA');
+            document.getElementById('live-time').textContent = timeStr;
+            document.getElementById('live-time-mobile').textContent = timeStr;
         }
-        updateTime();
+        setInterval(updateTime, 1000); updateTime();
 
-        function renderData() {
-            const activeList = document.getElementById('active-list');
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast'; toast.textContent = message;
+            container.appendChild(toast); setTimeout(() => { toast.remove(); }, 3000);
+        }
+
+        function exportBackup() {
+            const data = {
+                sysMeetings: localStorage.getItem('sysMeetings'), sysRouting: localStorage.getItem('sysRouting'),
+                sysActions: localStorage.getItem('sysActions'), sysDocs: localStorage.getItem('sysDocs'),
+                sysContacts: localStorage.getItem('sysContacts'), theme: localStorage.getItem('theme')
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+            const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "database.json");
+            document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove();
+            showToast('تم تحميل النسخة الاحتياطية ✓');
+        }
+
+        function importBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if(data.sysMeetings) localStorage.setItem('sysMeetings', data.sysMeetings);
+                    if(data.sysRouting) localStorage.setItem('sysRouting', data.sysRouting);
+                    if(data.sysActions) localStorage.setItem('sysActions', data.sysActions);
+                    if(data.sysDocs) localStorage.setItem('sysDocs', data.sysDocs);
+                    if(data.sysContacts) localStorage.setItem('sysContacts', data.sysContacts);
+                    if(data.theme) { localStorage.setItem('theme', data.theme); document.documentElement.setAttribute('data-theme', data.theme); }
+                    showToast('تم استعادة البيانات بنجاح 🔄');
+                    setTimeout(() => location.reload(), 1500);
+                } catch(err) { showToast('❌ خطأ في ملف النسخة الاحتياطية'); }
+            };
+            reader.readAsText(file);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn:not(.tools-section .nav-btn)').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll(`button[onclick="switchTab('${tabId}')"]`).forEach(btn => btn.classList.add('active'));
+            if(tabId === 'tab-dashboard') updateAnalytics();
+            window.scrollTo(0,0);
+        }
+
+        function getEmptyState(msg) { return `<div style="text-align:center; padding:30px; color:var(--text-muted); font-weight:800; font-size:1rem; width:100%;">${msg}</div>`; }
+
+        // --- وظيفة السجل التاريخي الجديدة ---
+        function loadHistory() {
             const historyList = document.getElementById('history-list');
-            let activeCount = 0; let historyCount = 0; let docsCount = dbData.sysDocs ? dbData.sysDocs.length : 0;
-            let contactsCount = dbData.sysContacts ? dbData.sysContacts.length : 0;
-
-            activeList.innerHTML = '';
+            if(!historyList) return;
             historyList.innerHTML = '';
-
-            // تصفية المعاملات (Routing)
-            if(dbData.sysRouting) {
-                dbData.sysRouting.forEach(r => {
-                    if(r.completed) {
-                        historyList.innerHTML += `<li><div class="item-details"><div class="item-title">${r.title}</div><div class="item-meta">أُنجزت في: ${r.dept} | تاريخ الإرسال: ${r.date}</div></div><span class="badge badge-success">معاملة منجزة</span></li>`;
-                        historyCount++;
-                    } else {
-                        activeList.innerHTML += `<li><div class="item-details"><div class="item-title">${r.title}</div><div class="item-meta">عالقة في: ${r.dept} | تاريخ الإرسال: ${r.date}</div></div><span class="badge badge-warning">بانتظار الإنجاز</span></li>`;
-                        activeCount++;
-                    }
-                });
-            }
-
-            // تصفية القرارات (Actions)
-            if(dbData.sysActions) {
-                dbData.sysActions.forEach(a => {
-                    if(a.completed) {
-                        historyList.innerHTML += `<li><div class="item-details"><div class="item-title">${a.desc}</div><div class="item-meta">نفذها: ${a.person} | التاريخ: ${a.date}</div></div><span class="badge badge-success">قرار مُنفذ</span></li>`;
-                        historyCount++;
-                    } else {
-                        activeList.innerHTML += `<li><div class="item-details"><div class="item-title">${a.desc}</div><div class="item-meta">المسؤول: ${a.person} | الموعد: ${a.date}</div></div><span class="badge badge-warning">بانتظار الإنجاز</span></li>`;
-                        activeCount++;
-                    }
-                });
-            }
+            let count = 0;
             
-            // إضافة الاجتماعات القادمة للمهام القائمة
-            if(dbData.sysMeetings) {
-                dbData.sysMeetings.forEach(m => {
-                    activeList.innerHTML += `<li><div class="item-details"><div class="item-title">${m.title}</div><div class="item-meta">📅 ${m.date} | 🕒 ${m.time} <br> 📌 ${m.agenda}</div></div><span class="badge badge-info">اجتماع مجدول</span></li>`;
-                    activeCount++;
-                });
-            }
+            const routing = JSON.parse(localStorage.getItem('sysRouting')) || [];
+            routing.forEach((r) => {
+                if(r.completed) {
+                    historyList.innerHTML += `<li><div class="item-details"><div class="item-title">${r.title}</div><div class="item-meta">🏢 أُنجزت في: ${r.dept} | 📅 ${r.date}</div></div><span class="badge badge-success">معاملة منجزة ✓</span></li>`;
+                    count++;
+                }
+            });
             
-            if(activeCount === 0) activeList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:bold;">لا توجد مهام أو اجتماعات قيد التنفيذ حالياً.</div>';
-            if(historyCount === 0) historyList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:bold;">السجل التاريخي فارغ حالياً.</div>';
+            const actions = JSON.parse(localStorage.getItem('sysActions')) || [];
+            actions.forEach((a) => {
+                if(a.completed) {
+                    historyList.innerHTML += `<li><div class="item-details"><div class="item-title">${a.desc}</div><div class="item-meta">👤 نفذها: ${a.person} | 📅 ${a.date}</div></div><span class="badge badge-success">قرار مُنفذ ✓</span></li>`;
+                    count++;
+                }
+            });
+            
+            if(count === 0) historyList.innerHTML = getEmptyState('السجل التاريخي فارغ. سيتم إضافة المهام هنا عند إنجازها.');
+        }
 
-            // رسم المخطط
+        function loadRouting() {
+            const routing = JSON.parse(localStorage.getItem('sysRouting')) || []; const list = document.getElementById('routing-list'); list.innerHTML = '';
+            if (routing.length === 0) { list.innerHTML = getEmptyState('لا توجد معاملات عالقة.'); return; }
+            const today = new Date(); today.setHours(0,0,0,0);
+            routing.forEach((r, i) => {
+                let statusBadge = ''; let rowClass = r.completed ? 'completed-task' : '';
+                let sendDate = new Date(r.date); let diffDays = Math.ceil(Math.abs(today - sendDate) / (1000 * 60 * 60 * 24)); 
+                if (r.completed) statusBadge = `<span class="badge badge-success">منجزة ✓</span>`;
+                else if (r.date && sendDate < today && diffDays >= 2) statusBadge = `<span class="badge badge-danger">متأخرة (${diffDays} أيام)</span>`;
+                else statusBadge = `<span class="badge badge-info">عند: ${r.dept}</span>`;
+                let toggleBtn = r.completed ? `<button class="btn-action btn-small" onclick="toggleRoutingStatus(${i})">فتح</button>` : `<button class="btn-action btn-small btn-success" onclick="toggleRoutingStatus(${i})">تم ✓</button>`;
+                list.innerHTML += `<li class="${rowClass}"><div class="item-details"><div class="item-title">${r.title}</div><div class="item-meta">🏢 ${r.dept} | 📅 ${r.date} <br> ${statusBadge}</div></div><div class="list-actions">${toggleBtn}<button class="btn-action btn-small btn-danger" onclick="deleteItem('sysRouting', ${i}, loadRouting)">حذف</button></div></li>`;
+            });
+        }
+        function addRouting() { const title = document.getElementById('route-title').value.trim(), dept = document.getElementById('route-dept').value, date = document.getElementById('route-date').value; if (title && date) { const routing = JSON.parse(localStorage.getItem('sysRouting')) || []; routing.push({ title, dept, date, completed: false }); localStorage.setItem('sysRouting', JSON.stringify(routing)); document.getElementById('route-title').value = ''; document.getElementById('route-date').value = ''; loadRouting(); showToast('تم الإرسال ✓'); updateAnalytics(); loadHistory(); } }
+        function toggleRoutingStatus(i) { const r = JSON.parse(localStorage.getItem('sysRouting')); r[i].completed = !r[i].completed; localStorage.setItem('sysRouting', JSON.stringify(r)); loadRouting(); updateAnalytics(); loadHistory(); }
+
+        function loadMeetings() {
+            const meetings = JSON.parse(localStorage.getItem('sysMeetings')) || []; const list = document.getElementById('meetings-list'); list.innerHTML = '';
+            if (meetings.length === 0) { list.innerHTML = getEmptyState('لا توجد اجتماعات.'); return; }
+            meetings.forEach((m, i) => { list.innerHTML += `<li><div class="item-details"><div class="item-title">${m.title}</div><div class="item-meta">📅 ${m.date} | 🕒 ${m.time} <br> 📌 ${m.agenda}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysMeetings', ${i}, loadMeetings)">إنهاء وإزالة</button></div></li>`; });
+        }
+        function addMeeting() { const dt = document.getElementById('meet-date').value, time = document.getElementById('meet-time').value, title = document.getElementById('meet-title').value.trim(), agenda = document.getElementById('meet-agenda').value.trim(); if (title && time && dt) { const m = JSON.parse(localStorage.getItem('sysMeetings')) || []; m.push({ date: dt, time, title, agenda }); localStorage.setItem('sysMeetings', JSON.stringify(m)); document.getElementById('meet-title').value = ''; document.getElementById('meet-agenda').value = ''; loadMeetings(); showToast('تم الحفظ ✓'); updateAnalytics(); } }
+
+        function loadActions() {
+            const actions = JSON.parse(localStorage.getItem('sysActions')) || []; const list = document.getElementById('actions-list'); list.innerHTML = '';
+            if (actions.length === 0) { list.innerHTML = getEmptyState('لا توجد قرارات.'); return; }
+            const today = new Date().toISOString().split('T')[0];
+            actions.forEach((a, i) => {
+                let statusBadge = a.completed ? `<span class="badge badge-success">مكتمل</span>` : (a.date && a.date < today ? `<span class="badge badge-danger">متأخر</span>` : `<span class="badge badge-warning">جاري</span>`);
+                let toggleBtn = a.completed ? `<button class="btn-action btn-small" onclick="toggleActionStatus(${i})">فتح</button>` : `<button class="btn-action btn-small btn-success" onclick="toggleActionStatus(${i})">إنجاز ✓</button>`;
+                list.innerHTML += `<li class="${a.completed ? 'completed-task' : ''}"><div class="item-details"><div class="item-title">${a.desc}</div><div class="item-meta">👤 ${a.person} | 📅 ${a.date} <br> ${statusBadge}</div></div><div class="list-actions">${toggleBtn}<button class="btn-action btn-small btn-danger" onclick="deleteItem('sysActions', ${i}, loadActions)">حذف</button></div></li>`;
+            });
+        }
+        function addAction() { const d = document.getElementById('action-desc').value.trim(), p = document.getElementById('action-person').value.trim(), dt = document.getElementById('action-date').value; if (d) { const a = JSON.parse(localStorage.getItem('sysActions')) || []; a.push({ desc: d, person: p, date: dt, completed: false }); localStorage.setItem('sysActions', JSON.stringify(a)); document.getElementById('action-desc').value = ''; loadActions(); showToast('تم التوثيق ✓'); updateAnalytics(); loadHistory(); } }
+        function toggleActionStatus(i) { const a = JSON.parse(localStorage.getItem('sysActions')); a[i].completed = !a[i].completed; localStorage.setItem('sysActions', JSON.stringify(a)); loadActions(); updateAnalytics(); loadHistory(); }
+
+        function loadDocs(f='') { const docs = JSON.parse(localStorage.getItem('sysDocs')) || []; const list = document.getElementById('archive-list'); list.innerHTML = ''; const flt = docs.filter(d=>d.title.includes(f)); if(flt.length===0){list.innerHTML=getEmptyState('الأرشيف فارغ'); return;} flt.forEach((d,i)=>{list.innerHTML+=`<li><div class="item-details"><div class="item-title"><span class="badge">${d.type}</span> ${d.title}</div><div class="item-meta">${d.date}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysDocs', ${docs.indexOf(d)}, loadDocs)">حذف</button></div></li>`;}); }
+        function archiveDoc() { const t=document.getElementById('doc-title').value; if(t){ const docs=JSON.parse(localStorage.getItem('sysDocs'))||[]; docs.push({type:document.getElementById('doc-type').value, title:t, date:new Date().toLocaleDateString('ar-SA')}); localStorage.setItem('sysDocs',JSON.stringify(docs)); document.getElementById('doc-title').value=''; loadDocs(); updateAnalytics();} }
+        function filterArchive() { loadDocs(document.getElementById('search-archive').value); }
+
+        function loadContacts() { const contacts = JSON.parse(localStorage.getItem('sysContacts')) || []; const list = document.getElementById('contacts-list'); list.innerHTML = ''; if (contacts.length === 0) { list.innerHTML = getEmptyState('لا توجد اتصالات مسجلة.'); return; } contacts.forEach((c, i) => { list.innerHTML += `<li><div class="item-details"><div class="item-title"><span class="badge">${c.type}</span> ${c.name}</div><div class="item-meta">${c.purpose}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysContacts', ${i}, loadContacts)">حذف</button></div></li>`; }); }
+        function addContact() { const n = document.getElementById('contact-name').value, p = document.getElementById('contact-purpose').value; if(n){ const c = JSON.parse(localStorage.getItem('sysContacts')) || []; c.push({type:document.getElementById('contact-type').value, name:n, purpose:p}); localStorage.setItem('sysContacts', JSON.stringify(c)); document.getElementById('contact-name').value=''; document.getElementById('contact-purpose').value=''; loadContacts(); showToast('تم التسجيل ✓'); updateAnalytics();} }
+
+        function deleteItem(key, idx, callback) { const items = JSON.parse(localStorage.getItem(key)) || []; items.splice(idx, 1); localStorage.setItem(key, JSON.stringify(items)); callback(); showToast('تم الحذف ✓'); updateAnalytics(); loadHistory(); }
+
+        function updateAnalytics() {
+            const mCount = (JSON.parse(localStorage.getItem('sysMeetings')) || []).length;
+            const dCount = (JSON.parse(localStorage.getItem('sysDocs')) || []).length;
+            const cCount = (JSON.parse(localStorage.getItem('sysContacts')) || []).length;
+            const pendingActions = (JSON.parse(localStorage.getItem('sysActions')) || []).filter(a => !a.completed).length;
+            const pendingRoutes = (JSON.parse(localStorage.getItem('sysRouting')) || []).filter(r => !r.completed).length;
+            
+            document.getElementById('count-meetings').innerText = mCount;
+            document.getElementById('count-docs').innerText = dCount;
+            document.getElementById('count-contacts').innerText = cCount;
+            document.getElementById('count-pending-actions').innerText = pendingActions;
+            document.getElementById('count-pending-routes').innerText = pendingRoutes;
+
+            const insightBox = document.getElementById('ai-insight');
+            if (pendingRoutes > 0 || pendingActions > 0) {
+                insightBox.innerHTML = `⚠️ عاجل: لديك (${pendingActions}) قرارات معلقة، و (${pendingRoutes}) معاملات عالقة بانتظار المتابعة.`;
+                insightBox.style.color = "var(--danger)"; insightBox.style.borderColor = "var(--danger)"; insightBox.style.background = "rgba(239, 68, 68, 0.08)";
+            } else {
+                insightBox.innerHTML = "✅ الوضع ممتاز! جميع المعاملات منجزة ولا توجد مهام عالقة.";
+                insightBox.style.color = "var(--success)"; insightBox.style.borderColor = "var(--success)"; insightBox.style.background = "rgba(16, 185, 129, 0.08)";
+            }
+            updateChart(mCount, dCount, cCount, pendingActions, pendingRoutes);
+        }
+
+        function updateChart(m, d, c, a, r) {
             const ctx = document.getElementById('activityChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#f8fafc' : '#0f172a';
+
+            if (activityChart) activityChart.destroy();
+            activityChart = new Chart(ctx, {
+                type: 'bar',
                 data: {
-                    labels: ['المهام والاجتماعات القائمة', 'الأرشيف التاريخي المنجز', 'المستندات المؤرشفة', 'الزوار والاتصالات'],
-                    datasets: [{ 
-                        data: [activeCount, historyCount, docsCount, contactsCount], 
-                        backgroundColor: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'], 
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
+                    labels: ['الاجتماعات', 'الأرشيف', 'الزوار', 'القرارات', 'المعاملات'],
+                    datasets: [{ label: 'مؤشرات', data: [m, d, c, a, r], backgroundColor: ['#1e293b', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'], borderRadius: 10, borderWidth: 0 }]
                 },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { 
-                        legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 13, weight: 'bold' } } } 
-                    } 
+                options: {
+                    responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: isDark ? '#334155' : '#e2e8f0' }, ticks: { color: textColor, stepSize: 1 } },
+                        x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Cairo', size: 12, weight: 'bold' } } }
+                    }
                 }
             });
         }
 
-        window.onload = () => { renderData(); };
+        function exportToPDF() {
+            showToast('⏳ جاري تجهيز التقرير...');
+            switchTab('tab-dashboard'); 
+            const element = document.getElementById('report-content');
+            html2pdf().set({ margin: 10, filename: 'تقرير_م_عبدالمحسن.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => showToast('تم التصدير بنجاح ✓'));
+        }
+
+        window.onload = () => { loadMeetings(); loadDocs(); loadContacts(); loadActions(); loadRouting(); loadHistory(); switchTab('tab-dashboard'); };
     </script>
 </body>
 </html>
