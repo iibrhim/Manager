@@ -98,7 +98,11 @@
         .completed-task .item-title { text-decoration: line-through; }
 
         .insight-box { background: rgba(16, 185, 129, 0.05); border: 2px solid var(--success); color: var(--success); padding: 18px; border-radius: 16px; font-weight: 800; margin-top: 20px; font-size: 1.05rem; display: flex; align-items: center; gap: 10px; }
-        .chart-container { position: relative; height: 280px; width: 100%; display: flex; justify-content: center; align-items: center;}
+        
+        /* ----------------------------------------------------
+           إصلاح مشكلة الرسم البياني (إزالة الـ flexbox)
+           ---------------------------------------------------- */
+        .chart-container { position: relative; height: 300px; width: 100%; margin: 0 auto; display: block; }
         
         .toast-container { position: fixed; bottom: 90px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;}
         .toast { background: var(--border-color); color: var(--bg-color); padding: 14px 24px; border-radius: 12px; font-weight: 800; opacity: 0; transform: translateY(20px); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.3s forwards 2.5s; box-shadow: 0 10px 25px rgba(0,0,0,0.15);}
@@ -270,13 +274,10 @@
     </main>
 
     <script>
-        // --- 🤖 نظام التزامن الذكي (Smart Sync Version Control) ---
         const injectedData = {"sysMeetings": [], "sysRouting": [], "sysActions": [], "sysDocs": [], "sysContacts": []};
-        const injectedVersion = "1775874173";
-        
+        const injectedVersion = "1775874761";
         const localVersion = localStorage.getItem('db_version');
         
-        // لن يتم استبدال البيانات إلا إذا قمت برفع نسخة جديدة من البايثون
         if (injectedVersion !== localVersion && injectedData && Object.keys(injectedData).length > 0) {
             if(injectedData.sysMeetings) localStorage.setItem('sysMeetings', typeof injectedData.sysMeetings === 'string' ? injectedData.sysMeetings : JSON.stringify(injectedData.sysMeetings));
             if(injectedData.sysRouting) localStorage.setItem('sysRouting', typeof injectedData.sysRouting === 'string' ? injectedData.sysRouting : JSON.stringify(injectedData.sysRouting));
@@ -285,7 +286,6 @@
             if(injectedData.sysContacts) localStorage.setItem('sysContacts', typeof injectedData.sysContacts === 'string' ? injectedData.sysContacts : JSON.stringify(injectedData.sysContacts));
             if(injectedData.theme) { localStorage.setItem('theme', injectedData.theme); document.documentElement.setAttribute('data-theme', injectedData.theme); }
             
-            // تحديث رقم النسخة في المتصفح لمنع المسح مرة أخرى عند التحديث (Refresh)
             localStorage.setItem('db_version', injectedVersion);
         }
 
@@ -341,7 +341,6 @@
                     if(data.sysContacts) localStorage.setItem('sysContacts', data.sysContacts);
                     if(data.theme) { localStorage.setItem('theme', data.theme); document.documentElement.setAttribute('data-theme', data.theme); }
                     
-                    // حماية البيانات بعد الاستيراد
                     localStorage.setItem('db_version', injectedVersion);
                     showToast('تم استعادة البيانات بنجاح 🔄');
                     setTimeout(() => location.reload(), 1500);
