@@ -270,17 +270,23 @@
     </main>
 
     <script>
-        // --- 🤖 تقنية الـ SSG الذكية للتزامن مع جيت هب ---
+        // --- 🤖 نظام التزامن الذكي (Smart Sync Version Control) ---
         const injectedData = {"sysMeetings": [], "sysRouting": [], "sysActions": [], "sysDocs": [], "sysContacts": []};
+        const injectedVersion = "1775874173";
         
-        // إذا كان الموقع يُفتح من رابط الإنترنت (جيت هب)، قم بتغذية الـ LocalStorage فوراً من ملفات البايثون
-        if (window.location.hostname.includes("github.io") && injectedData && Object.keys(injectedData).length > 0) {
+        const localVersion = localStorage.getItem('db_version');
+        
+        // لن يتم استبدال البيانات إلا إذا قمت برفع نسخة جديدة من البايثون
+        if (injectedVersion !== localVersion && injectedData && Object.keys(injectedData).length > 0) {
             if(injectedData.sysMeetings) localStorage.setItem('sysMeetings', typeof injectedData.sysMeetings === 'string' ? injectedData.sysMeetings : JSON.stringify(injectedData.sysMeetings));
             if(injectedData.sysRouting) localStorage.setItem('sysRouting', typeof injectedData.sysRouting === 'string' ? injectedData.sysRouting : JSON.stringify(injectedData.sysRouting));
             if(injectedData.sysActions) localStorage.setItem('sysActions', typeof injectedData.sysActions === 'string' ? injectedData.sysActions : JSON.stringify(injectedData.sysActions));
             if(injectedData.sysDocs) localStorage.setItem('sysDocs', typeof injectedData.sysDocs === 'string' ? injectedData.sysDocs : JSON.stringify(injectedData.sysDocs));
             if(injectedData.sysContacts) localStorage.setItem('sysContacts', typeof injectedData.sysContacts === 'string' ? injectedData.sysContacts : JSON.stringify(injectedData.sysContacts));
             if(injectedData.theme) { localStorage.setItem('theme', injectedData.theme); document.documentElement.setAttribute('data-theme', injectedData.theme); }
+            
+            // تحديث رقم النسخة في المتصفح لمنع المسح مرة أخرى عند التحديث (Refresh)
+            localStorage.setItem('db_version', injectedVersion);
         }
 
         const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
@@ -334,6 +340,9 @@
                     if(data.sysDocs) localStorage.setItem('sysDocs', data.sysDocs);
                     if(data.sysContacts) localStorage.setItem('sysContacts', data.sysContacts);
                     if(data.theme) { localStorage.setItem('theme', data.theme); document.documentElement.setAttribute('data-theme', data.theme); }
+                    
+                    // حماية البيانات بعد الاستيراد
+                    localStorage.setItem('db_version', injectedVersion);
                     showToast('تم استعادة البيانات بنجاح 🔄');
                     setTimeout(() => location.reload(), 1500);
                 } catch(err) { showToast('❌ خطأ في ملف النسخة الاحتياطية'); }
@@ -352,7 +361,6 @@
 
         function getEmptyState(msg) { return `<div style="text-align:center; padding:30px; color:var(--text-muted); font-weight:800; font-size:1rem; width:100%;">${msg}</div>`; }
 
-        // --- وظيفة السجل التاريخي الجديدة ---
         function loadHistory() {
             const historyList = document.getElementById('history-list');
             if(!historyList) return;
