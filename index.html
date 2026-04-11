@@ -10,8 +10,9 @@
 
     <style>
         :root {
-            --bg-color: #f0f4f8; --sidebar-bg: #ffffff; --text-main: #0f172a; --text-muted: #64748b;
-            --border-color: #1e293b; --card-bg: #ffffff; --card-border: #e2e8f0; --accent-color: #f8fafc;
+            --bg-color: #f0f4f8; --sidebar-bg: #ffffff; --text-main: #0f172a;
+            --text-muted: #64748b; --border-color: #1e293b; --card-bg: #ffffff;
+            --card-border: #e2e8f0; --accent-color: #f8fafc;
             --danger: #ef4444; --success: #10b981; --warning: #f59e0b; --info: #3b82f6;
             --grad-primary: linear-gradient(135deg, #1e293b, #475569);
             --grad-danger: linear-gradient(135deg, #ef4444, #f97316);
@@ -20,8 +21,9 @@
         }
 
         [data-theme="dark"] {
-            --bg-color: #0f172a; --sidebar-bg: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8;
-            --border-color: #f8fafc; --card-bg: #1e293b; --card-border: #334155; --accent-color: #334155;
+            --bg-color: #0f172a; --sidebar-bg: #1e293b; --text-main: #f8fafc;
+            --text-muted: #94a3b8; --border-color: #f8fafc; --card-bg: #1e293b;
+            --card-border: #334155; --accent-color: #334155;
             --grad-primary: linear-gradient(135deg, #f8fafc, #cbd5e1);
         }
 
@@ -73,7 +75,6 @@
         .btn-action { background: transparent; color: var(--text-main); border: 2px solid var(--border-color); padding: 10px 24px; border-radius: 25px; cursor: pointer; font-weight: 900; font-size: 0.95rem; transition: 0.2s; width: 100%; }
         .btn-action:active { transform: scale(0.96); }
         .btn-action:hover { background: var(--border-color); color: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        
         .btn-small { padding: 6px 14px; font-size: 0.85rem; width: auto; border-width: 1.5px;}
         .btn-danger { border-color: var(--danger); color: var(--danger); }
         .btn-danger:hover { background: var(--danger); color: #fff; }
@@ -83,7 +84,6 @@
         ul.data-list { list-style: none; }
         ul.data-list li { padding: 15px; border: 1px solid var(--card-border); border-radius: 14px; margin-bottom: 12px; background: var(--card-bg); display: flex; justify-content: space-between; align-items: center; transition: 0.2s; gap: 10px; flex-wrap: wrap; }
         ul.data-list li:hover { border-color: var(--text-muted); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-        
         .item-details { flex: 1; min-width: 200px; }
         .item-title { font-weight: 900; margin-bottom: 4px; color: var(--border-color); font-size: 1.05rem;}
         .item-meta { font-size: 0.85rem; color: var(--text-muted); font-weight: 700; line-height: 1.5;}
@@ -97,24 +97,23 @@
         .completed-task { opacity: 0.7; }
         .completed-task .item-title { text-decoration: line-through; }
 
-        .insight-box { background: rgba(16, 185, 129, 0.05); border: 2px solid var(--success); color: var(--success); padding: 18px; border-radius: 16px; font-weight: 800; margin-top: 20px; font-size: 1.05rem; display: flex; align-items: center; gap: 10px; }
-        
-        /* ----------------------------------------------------
-           إصلاح مشكلة الرسم البياني (إزالة الـ flexbox)
-           ---------------------------------------------------- */
-        .chart-container { position: relative; height: 300px; width: 100%; margin: 0 auto; display: block; }
+        .insight-box { background: rgba(16, 185, 129, 0.05); border: 2px solid var(--success); color: var(--success); padding: 18px; border-radius: 16px; font-weight: 800; margin-top: 20px; font-size: 1.05rem; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .chart-container { position: relative; height: 280px; width: 100%; display: flex; justify-content: center; align-items: center;}
         
         .toast-container { position: fixed; bottom: 90px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;}
         .toast { background: var(--border-color); color: var(--bg-color); padding: 14px 24px; border-radius: 12px; font-weight: 800; opacity: 0; transform: translateY(20px); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.3s forwards 2.5s; box-shadow: 0 10px 25px rgba(0,0,0,0.15);}
         @keyframes popIn { to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
 
+        #auto-save-indicator { font-size: 0.75rem; color: var(--success); text-align: center; margin-top: 10px; opacity: 0; transition: opacity 0.3s; font-weight: bold;}
+
         @media (max-width: 850px) {
             body { flex-direction: column; }
             .mobile-header { display: flex; }
             .sidebar { width: 100%; height: 75px; flex-direction: row; padding: 5px; position: fixed; bottom: 0; left: 0; border-top: 1px solid var(--card-border); border-left: none; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); overflow-x: auto; overflow-y: hidden; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
             .sidebar::-webkit-scrollbar { display: none; }
-            .brand, .tools-section { display: none; }
+            /* هنا يتم إخفاء أدوات الكمبيوتر بالكامل في الجوال */
+            .brand, .tools-section, #auto-save-indicator { display: none; }
             .nav-btn { flex: 0 0 auto; text-align: center; padding: 10px 18px; margin: 0 4px; font-size: 0.9rem; border-radius: 20px; border: none; background: var(--bg-color); }
             .nav-btn.active { box-shadow: none; transform: scale(1.05); }
             .main-content { padding: 15px; padding-top: 85px; padding-bottom: 90px; }
@@ -141,7 +140,6 @@
             <p id="live-time-mobile">جاري التحميل...</p>
         </div>
         <div class="mobile-tools">
-            <button onclick="document.getElementById('import-file').click()" title="استيراد">📂</button>
             <button onclick="toggleDarkMode()">🌓</button>
             <button onclick="exportToPDF()">📥</button>
         </div>
@@ -166,6 +164,7 @@
             <button class="nav-btn" onclick="exportBackup()" style="width: 100%; justify-content: center; font-size: 0.85rem;">نسخة احتياطية 💾</button>
             <button class="nav-btn" onclick="toggleDarkMode()" style="width: 100%; justify-content: center; font-size: 0.85rem;">الوضع الليلي 🌓</button>
             <button class="btn-action" onclick="exportToPDF()" style="margin-top: 10px;">تصدير التقرير 📥</button>
+            <div id="auto-save-indicator">☁️ تم حفظ التغييرات تلقائياً</div>
         </div>
     </aside>
 
@@ -192,10 +191,11 @@
                 <div class="card-grid">
                     <div class="card">
                         <div class="card-header"><h3>إرسال معاملة للمتابعة</h3></div>
-                        <div class="input-group"><input type="text" id="route-title" placeholder="موضوع المعاملة..."></div>
+                        <div class="input-group"><input type="text" id="route-title" placeholder="موضوع المعاملة..." class="auto-draft"></div>
                         <div class="input-group">
-                            <select id="route-dept"><option value="المالية">المالية</option><option value="المشتريات">المشتريات</option><option value="الموارد البشرية">الموارد البشرية</option><option value="الأمن والسلامة">الأمن والسلامة</option><option value="الإدارة العليا">الإدارة العليا</option></select>
-                            <input type="date" id="route-date">
+                            <select id="route-dept" class="auto-draft"><option value="المالية">المالية</option><option value="المشتريات">المشتريات</option><option value="الموارد البشرية">الموارد البشرية</option><option value="الأمن والسلامة">الأمن والسلامة</option><option value="الإدارة العليا">الإدارة العليا</option></select>
+                            <select id="route-prio" class="auto-draft"><option value="عادية">🟢 أولوية عادية</option><option value="متوسطة">🟡 أولوية متوسطة</option><option value="قصوى">🔴 أولوية قصوى</option></select>
+                            <input type="date" id="route-date" class="auto-draft">
                         </div>
                         <button class="btn-action" onclick="addRouting()">تسجيل وإرسال للمتابعة</button>
                     </div>
@@ -207,9 +207,9 @@
                 <div class="card-grid">
                     <div class="card">
                         <div class="card-header"><h3>جدولة اجتماع جديد</h3></div>
-                        <div class="input-group"><input type="date" id="meet-date" style="flex: 1;"><input type="time" id="meet-time" style="flex: 1;"></div>
-                        <div class="input-group"><input type="text" id="meet-title" placeholder="عنوان الاجتماع..." style="width: 100%;"></div>
-                        <textarea id="meet-agenda" placeholder="أجندة الاجتماع..."></textarea>
+                        <div class="input-group"><input type="date" id="meet-date" class="auto-draft" style="flex: 1;"><input type="time" id="meet-time" class="auto-draft" style="flex: 1;"></div>
+                        <div class="input-group"><input type="text" id="meet-title" class="auto-draft" placeholder="عنوان الاجتماع..." style="width: 100%;"></div>
+                        <textarea id="meet-agenda" class="auto-draft" placeholder="أجندة الاجتماع..."></textarea>
                         <button class="btn-action" onclick="addMeeting()">تأكيد الموعد</button>
                     </div>
                     <div class="card"><div class="card-header"><h3>أجندة المواعيد</h3></div><ul class="data-list" id="meetings-list"></ul></div>
@@ -220,8 +220,12 @@
                 <div class="card-grid">
                     <div class="card">
                         <div class="card-header"><h3>تسجيل قرار أو توصية</h3></div>
-                        <div class="input-group"><input type="text" id="action-desc" placeholder="نص القرار..."></div>
-                        <div class="input-group"><input type="text" id="action-person" placeholder="المسؤول..."><input type="date" id="action-date"></div>
+                        <div class="input-group"><input type="text" id="action-desc" class="auto-draft" placeholder="نص القرار..."></div>
+                        <div class="input-group">
+                            <input type="text" id="action-person" class="auto-draft" placeholder="المسؤول...">
+                            <select id="action-prio" class="auto-draft"><option value="عادية">🟢 عادية</option><option value="قصوى">🔴 قصوى</option></select>
+                            <input type="date" id="action-date" class="auto-draft">
+                        </div>
                         <button class="btn-action" onclick="addAction()">حفظ التوصية</button>
                     </div>
                     <div class="card"><div class="card-header"><h3>سجل المتابعة</h3></div><ul class="data-list" id="actions-list" style="max-height: 400px; overflow-y: auto;"></ul></div>
@@ -233,10 +237,10 @@
                     <div class="card">
                         <div class="card-header"><h3>أرشفة مستند</h3></div>
                         <div class="input-group">
-                            <select id="doc-type"><option value="خطاب صادر">خطاب صادر</option><option value="تقرير فني">تقرير فني</option><option value="مذكرة داخلية">مذكرة داخلية</option></select>
-                            <input type="text" id="doc-title" placeholder="عنوان المستند...">
+                            <select id="doc-type" class="auto-draft"><option value="خطاب صادر">خطاب صادر</option><option value="تقرير فني">تقرير فني</option><option value="مذكرة داخلية">مذكرة داخلية</option></select>
+                            <input type="text" id="doc-title" class="auto-draft" placeholder="عنوان المستند...">
                         </div>
-                        <textarea id="doc-notes" placeholder="ملاحظات..."></textarea>
+                        <textarea id="doc-notes" class="auto-draft" placeholder="ملاحظات..."></textarea>
                         <button class="btn-action" onclick="archiveDoc()">إيداع في الأرشيف</button>
                     </div>
                     <div class="card"><div class="card-header"><h3>بحث</h3></div><input type="text" id="search-archive" placeholder="بحث..." oninput="filterArchive()" style="margin-bottom:15px; border-radius:25px; width:100%;"><ul class="data-list" id="archive-list" style="max-height: 300px; overflow-y: auto;"></ul></div>
@@ -248,10 +252,10 @@
                     <div class="card">
                         <div class="card-header"><h3>تسجيل زائر أو اتصال</h3></div>
                         <div class="input-group">
-                            <select id="contact-type"><option value="مكالمة واردة">مكالمة واردة</option><option value="زائر مكتبي">زائر مكتبي</option></select>
-                            <input type="text" id="contact-name" placeholder="الاسم والجهة...">
+                            <select id="contact-type" class="auto-draft"><option value="مكالمة واردة">مكالمة واردة</option><option value="زائر مكتبي">زائر مكتبي</option></select>
+                            <input type="text" id="contact-name" class="auto-draft" placeholder="الاسم والجهة...">
                         </div>
-                        <input type="text" id="contact-purpose" placeholder="السبب..." style="margin-bottom: 15px; width:100%;">
+                        <input type="text" id="contact-purpose" class="auto-draft" placeholder="السبب..." style="margin-bottom: 15px; width:100%;">
                         <button class="btn-action" onclick="addContact()">تسجيل زائر / اتصال</button>
                     </div>
                     <div class="card"><div class="card-header"><h3>سجل اليوم</h3></div><ul class="data-list" id="contacts-list"></ul></div>
@@ -274,8 +278,9 @@
     </main>
 
     <script>
+        // --- 1. محرك حقن البيانات (من السكربت الأول) ---
         const injectedData = {"sysMeetings": [], "sysRouting": [], "sysActions": [], "sysDocs": [], "sysContacts": []};
-        const injectedVersion = "1775879704";
+        const injectedVersion = "1775880146";
         const localVersion = localStorage.getItem('db_version');
         
         if (injectedVersion !== localVersion && injectedData && Object.keys(injectedData).length > 0) {
@@ -289,13 +294,19 @@
             localStorage.setItem('db_version', injectedVersion);
         }
 
+        // --- 2. إعدادات الواجهة والوضع الليلي ---
         const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
         if (currentTheme) { document.documentElement.setAttribute('data-theme', currentTheme); }
         
         function toggleDarkMode() {
             let theme = document.documentElement.getAttribute('data-theme');
-            if (theme === 'dark') { document.documentElement.setAttribute('data-theme', 'light'); localStorage.setItem('theme', 'light'); } 
-            else { document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('theme', 'dark'); }
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
             updateChart(); 
         }
 
@@ -314,6 +325,35 @@
             container.appendChild(toast); setTimeout(() => { toast.remove(); }, 3000);
         }
 
+        // --- 3. أدوات الواجهة المتطورة (الحفظ التلقائي والتاريخ الذكي) ---
+        function formatSmartDate(dateStr) {
+            if(!dateStr) return 'تاريخ غير محدد';
+            try { return new Intl.DateTimeFormat('ar-SA', { dateStyle: 'medium' }).format(new Date(dateStr)); } 
+            catch(e) { return dateStr; }
+        }
+
+        function initAutoSaveDrafts() {
+            document.querySelectorAll('.auto-draft').forEach(el => {
+                if(localStorage.getItem('draft_' + el.id)) el.value = localStorage.getItem('draft_' + el.id);
+                el.addEventListener('input', () => {
+                    localStorage.setItem('draft_' + el.id, el.value);
+                    showSaveIndicator();
+                });
+            });
+        }
+        
+        function clearDrafts(ids) {
+            ids.forEach(id => { document.getElementById(id).value = ''; localStorage.removeItem('draft_' + id); });
+            showSaveIndicator();
+        }
+        
+        function showSaveIndicator() {
+            const ind = document.getElementById('auto-save-indicator');
+            ind.style.opacity = '1';
+            setTimeout(() => ind.style.opacity = '0', 2000);
+        }
+
+        // --- 4. إدارة البيانات والاستيراد/التصدير ---
         function exportBackup() {
             const data = {
                 sysMeetings: localStorage.getItem('sysMeetings'), sysRouting: localStorage.getItem('sysRouting'),
@@ -321,15 +361,15 @@
                 sysContacts: localStorage.getItem('sysContacts'), theme: localStorage.getItem('theme')
             };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-            const downloadAnchorNode = document.createElement('a'); downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "database.json");
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "agenda_backup_" + new Date().toLocaleDateString('ar-SA') + ".json");
             document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); downloadAnchorNode.remove();
             showToast('تم تحميل النسخة الاحتياطية ✓');
         }
 
         function importBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -343,10 +383,9 @@
                     
                     localStorage.setItem('db_version', injectedVersion);
                     showToast('تم استعادة البيانات بنجاح 🔄');
-                    setTimeout(() => location.reload(), 1500);
+                    setTimeout(() => location.reload(), 1500); 
                 } catch(err) { showToast('❌ خطأ في ملف النسخة الاحتياطية'); }
-            };
-            reader.readAsText(file);
+            }; reader.readAsText(file);
         }
 
         function switchTab(tabId) {
@@ -360,6 +399,7 @@
 
         function getEmptyState(msg) { return `<div style="text-align:center; padding:30px; color:var(--text-muted); font-weight:800; font-size:1rem; width:100%;">${msg}</div>`; }
 
+        // --- 5. تحميل ومعالجة القوائم والسجل التاريخي ---
         function loadHistory() {
             const historyList = document.getElementById('history-list');
             if(!historyList) return;
@@ -369,7 +409,7 @@
             const routing = JSON.parse(localStorage.getItem('sysRouting')) || [];
             routing.forEach((r) => {
                 if(r.completed) {
-                    historyList.innerHTML += `<li><div class="item-details"><div class="item-title">${r.title}</div><div class="item-meta">🏢 أُنجزت في: ${r.dept} | 📅 ${r.date}</div></div><span class="badge badge-success">معاملة منجزة ✓</span></li>`;
+                    historyList.innerHTML += `<li><div class="item-details"><div class="item-title">${r.title}</div><div class="item-meta">🏢 أُنجزت في: ${r.dept} | 📅 ${formatSmartDate(r.date)}</div></div><span class="badge badge-success">معاملة منجزة ✓</span></li>`;
                     count++;
                 }
             });
@@ -377,7 +417,7 @@
             const actions = JSON.parse(localStorage.getItem('sysActions')) || [];
             actions.forEach((a) => {
                 if(a.completed) {
-                    historyList.innerHTML += `<li><div class="item-details"><div class="item-title">${a.desc}</div><div class="item-meta">👤 نفذها: ${a.person} | 📅 ${a.date}</div></div><span class="badge badge-success">قرار مُنفذ ✓</span></li>`;
+                    historyList.innerHTML += `<li><div class="item-details"><div class="item-title">${a.desc}</div><div class="item-meta">👤 نفذها: ${a.person} | 📅 ${formatSmartDate(a.date)}</div></div><span class="badge badge-success">قرار مُنفذ ✓</span></li>`;
                     count++;
                 }
             });
@@ -392,67 +432,109 @@
             routing.forEach((r, i) => {
                 let statusBadge = ''; let rowClass = r.completed ? 'completed-task' : '';
                 let sendDate = new Date(r.date); let diffDays = Math.ceil(Math.abs(today - sendDate) / (1000 * 60 * 60 * 24)); 
+                let prioClass = r.prio === 'قصوى' ? 'badge-danger' : (r.prio === 'متوسطة' ? 'badge-warning' : 'badge-success');
+                let prioBadge = r.prio ? `<span class="badge ${prioClass}">أولوية ${r.prio}</span>` : '';
+
                 if (r.completed) statusBadge = `<span class="badge badge-success">منجزة ✓</span>`;
                 else if (r.date && sendDate < today && diffDays >= 2) statusBadge = `<span class="badge badge-danger">متأخرة (${diffDays} أيام)</span>`;
                 else statusBadge = `<span class="badge badge-info">عند: ${r.dept}</span>`;
+                
                 let toggleBtn = r.completed ? `<button class="btn-action btn-small" onclick="toggleRoutingStatus(${i})">فتح</button>` : `<button class="btn-action btn-small btn-success" onclick="toggleRoutingStatus(${i})">تم ✓</button>`;
-                list.innerHTML += `<li class="${rowClass}"><div class="item-details"><div class="item-title">${r.title}</div><div class="item-meta">🏢 ${r.dept} | 📅 ${r.date} <br> ${statusBadge}</div></div><div class="list-actions">${toggleBtn}<button class="btn-action btn-small btn-danger" onclick="deleteItem('sysRouting', ${i}, loadRouting)">حذف</button></div></li>`;
+                list.innerHTML += `<li class="${rowClass}"><div class="item-details"><div class="item-title">${r.title}</div><div class="item-meta">🏢 ${r.dept} | 📅 ${formatSmartDate(r.date)} <br> ${prioBadge} ${statusBadge}</div></div><div class="list-actions">${toggleBtn}<button class="btn-action btn-small btn-danger" onclick="deleteItem('sysRouting', ${i}, loadRouting)">حذف</button></div></li>`;
             });
         }
-        function addRouting() { const title = document.getElementById('route-title').value.trim(), dept = document.getElementById('route-dept').value, date = document.getElementById('route-date').value; if (title && date) { const routing = JSON.parse(localStorage.getItem('sysRouting')) || []; routing.push({ title, dept, date, completed: false }); localStorage.setItem('sysRouting', JSON.stringify(routing)); document.getElementById('route-title').value = ''; document.getElementById('route-date').value = ''; loadRouting(); showToast('تم الإرسال ✓'); updateAnalytics(); loadHistory(); } }
-        function toggleRoutingStatus(i) { const r = JSON.parse(localStorage.getItem('sysRouting')); r[i].completed = !r[i].completed; localStorage.setItem('sysRouting', JSON.stringify(r)); loadRouting(); updateAnalytics(); loadHistory(); }
+        function addRouting() { 
+            const title = document.getElementById('route-title').value.trim(), dept = document.getElementById('route-dept').value, date = document.getElementById('route-date').value, prio = document.getElementById('route-prio').value; 
+            if (title && date) { 
+                const routing = JSON.parse(localStorage.getItem('sysRouting')) || []; 
+                routing.push({ title, dept, date, prio, completed: false }); 
+                localStorage.setItem('sysRouting', JSON.stringify(routing)); 
+                clearDrafts(['route-title', 'route-date']); 
+                loadRouting(); showToast('تم الإرسال ✓'); updateAnalytics(); loadHistory();
+            } 
+        }
+        function toggleRoutingStatus(i) { const r = JSON.parse(localStorage.getItem('sysRouting')); r[i].completed = !r[i].completed; localStorage.setItem('sysRouting', JSON.stringify(r)); loadRouting(); updateAnalytics(); loadHistory(); showSaveIndicator(); }
 
         function loadMeetings() {
             const meetings = JSON.parse(localStorage.getItem('sysMeetings')) || []; const list = document.getElementById('meetings-list'); list.innerHTML = '';
             if (meetings.length === 0) { list.innerHTML = getEmptyState('لا توجد اجتماعات.'); return; }
-            meetings.forEach((m, i) => { list.innerHTML += `<li><div class="item-details"><div class="item-title">${m.title}</div><div class="item-meta">📅 ${m.date} | 🕒 ${m.time} <br> 📌 ${m.agenda}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysMeetings', ${i}, loadMeetings)">إنهاء وإزالة</button></div></li>`; });
+            meetings.forEach((m, i) => { list.innerHTML += `<li><div class="item-details"><div class="item-title">${m.title}</div><div class="item-meta">📅 ${formatSmartDate(m.date)} | 🕒 ${m.time} <br> 📌 ${m.agenda}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysMeetings', ${i}, loadMeetings)">إنهاء وإزالة</button></div></li>`; });
         }
-        function addMeeting() { const dt = document.getElementById('meet-date').value, time = document.getElementById('meet-time').value, title = document.getElementById('meet-title').value.trim(), agenda = document.getElementById('meet-agenda').value.trim(); if (title && time && dt) { const m = JSON.parse(localStorage.getItem('sysMeetings')) || []; m.push({ date: dt, time, title, agenda }); localStorage.setItem('sysMeetings', JSON.stringify(m)); document.getElementById('meet-title').value = ''; document.getElementById('meet-agenda').value = ''; loadMeetings(); showToast('تم الحفظ ✓'); updateAnalytics(); } }
+        function addMeeting() { 
+            const dt = document.getElementById('meet-date').value, time = document.getElementById('meet-time').value, title = document.getElementById('meet-title').value.trim(), agenda = document.getElementById('meet-agenda').value.trim(); 
+            if (title && time && dt) { 
+                const m = JSON.parse(localStorage.getItem('sysMeetings')) || []; m.push({ date: dt, time, title, agenda }); localStorage.setItem('sysMeetings', JSON.stringify(m)); 
+                clearDrafts(['meet-title', 'meet-agenda', 'meet-date', 'meet-time']); loadMeetings(); showToast('تم الحفظ ✓'); updateAnalytics(); 
+            } 
+        }
 
         function loadActions() {
             const actions = JSON.parse(localStorage.getItem('sysActions')) || []; const list = document.getElementById('actions-list'); list.innerHTML = '';
             if (actions.length === 0) { list.innerHTML = getEmptyState('لا توجد قرارات.'); return; }
             const today = new Date().toISOString().split('T')[0];
             actions.forEach((a, i) => {
+                let prioClass = a.prio === 'قصوى' ? 'badge-danger' : 'badge-success';
+                let prioBadge = a.prio ? `<span class="badge ${prioClass}">أولوية ${a.prio}</span>` : '';
+                
                 let statusBadge = a.completed ? `<span class="badge badge-success">مكتمل</span>` : (a.date && a.date < today ? `<span class="badge badge-danger">متأخر</span>` : `<span class="badge badge-warning">جاري</span>`);
                 let toggleBtn = a.completed ? `<button class="btn-action btn-small" onclick="toggleActionStatus(${i})">فتح</button>` : `<button class="btn-action btn-small btn-success" onclick="toggleActionStatus(${i})">إنجاز ✓</button>`;
-                list.innerHTML += `<li class="${a.completed ? 'completed-task' : ''}"><div class="item-details"><div class="item-title">${a.desc}</div><div class="item-meta">👤 ${a.person} | 📅 ${a.date} <br> ${statusBadge}</div></div><div class="list-actions">${toggleBtn}<button class="btn-action btn-small btn-danger" onclick="deleteItem('sysActions', ${i}, loadActions)">حذف</button></div></li>`;
+                
+                list.innerHTML += `<li class="${a.completed ? 'completed-task' : ''}"><div class="item-details"><div class="item-title">${a.desc}</div><div class="item-meta">👤 ${a.person} | 📅 ${formatSmartDate(a.date)} <br> ${prioBadge} ${statusBadge}</div></div><div class="list-actions">${toggleBtn}<button class="btn-action btn-small btn-danger" onclick="deleteItem('sysActions', ${i}, loadActions)">حذف</button></div></li>`;
             });
         }
-        function addAction() { const d = document.getElementById('action-desc').value.trim(), p = document.getElementById('action-person').value.trim(), dt = document.getElementById('action-date').value; if (d) { const a = JSON.parse(localStorage.getItem('sysActions')) || []; a.push({ desc: d, person: p, date: dt, completed: false }); localStorage.setItem('sysActions', JSON.stringify(a)); document.getElementById('action-desc').value = ''; loadActions(); showToast('تم التوثيق ✓'); updateAnalytics(); loadHistory(); } }
-        function toggleActionStatus(i) { const a = JSON.parse(localStorage.getItem('sysActions')); a[i].completed = !a[i].completed; localStorage.setItem('sysActions', JSON.stringify(a)); loadActions(); updateAnalytics(); loadHistory(); }
+        function addAction() { 
+            const d = document.getElementById('action-desc').value.trim(), p = document.getElementById('action-person').value.trim(), dt = document.getElementById('action-date').value, prio = document.getElementById('action-prio').value; 
+            if (d) { 
+                const a = JSON.parse(localStorage.getItem('sysActions')) || []; a.push({ desc: d, person: p, date: dt, prio: prio, completed: false }); localStorage.setItem('sysActions', JSON.stringify(a)); 
+                clearDrafts(['action-desc', 'action-person', 'action-date']); loadActions(); showToast('تم التوثيق ✓'); updateAnalytics(); loadHistory();
+            } 
+        }
+        function toggleActionStatus(i) { const a = JSON.parse(localStorage.getItem('sysActions')); a[i].completed = !a[i].completed; localStorage.setItem('sysActions', JSON.stringify(a)); loadActions(); updateAnalytics(); loadHistory(); showSaveIndicator(); }
 
-        function loadDocs(f='') { const docs = JSON.parse(localStorage.getItem('sysDocs')) || []; const list = document.getElementById('archive-list'); list.innerHTML = ''; const flt = docs.filter(d=>d.title.includes(f)); if(flt.length===0){list.innerHTML=getEmptyState('الأرشيف فارغ'); return;} flt.forEach((d,i)=>{list.innerHTML+=`<li><div class="item-details"><div class="item-title"><span class="badge">${d.type}</span> ${d.title}</div><div class="item-meta">${d.date}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysDocs', ${docs.indexOf(d)}, loadDocs)">حذف</button></div></li>`;}); }
-        function archiveDoc() { const t=document.getElementById('doc-title').value; if(t){ const docs=JSON.parse(localStorage.getItem('sysDocs'))||[]; docs.push({type:document.getElementById('doc-type').value, title:t, date:new Date().toLocaleDateString('ar-SA')}); localStorage.setItem('sysDocs',JSON.stringify(docs)); document.getElementById('doc-title').value=''; loadDocs(); updateAnalytics();} }
+        function loadDocs(f='') { const docs = JSON.parse(localStorage.getItem('sysDocs')) || []; const list = document.getElementById('archive-list'); list.innerHTML = ''; const flt = docs.filter(d=>d.title.includes(f)); if(flt.length===0){list.innerHTML=getEmptyState('الأرشيف فارغ'); return;} flt.forEach((d,i)=>{list.innerHTML+=`<li><div class="item-details"><div class="item-title"><span class="badge">${d.type}</span> ${d.title}</div><div class="item-meta">${formatSmartDate(d.date)}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysDocs', ${docs.indexOf(d)}, loadDocs)">حذف</button></div></li>`;}); }
+        function archiveDoc() { const t=document.getElementById('doc-title').value; if(t){ const docs=JSON.parse(localStorage.getItem('sysDocs'))||[]; docs.push({type:document.getElementById('doc-type').value, title:t, date:new Date().toISOString()}); localStorage.setItem('sysDocs',JSON.stringify(docs)); clearDrafts(['doc-title', 'doc-notes']); loadDocs(); updateAnalytics();} }
         function filterArchive() { loadDocs(document.getElementById('search-archive').value); }
 
         function loadContacts() { const contacts = JSON.parse(localStorage.getItem('sysContacts')) || []; const list = document.getElementById('contacts-list'); list.innerHTML = ''; if (contacts.length === 0) { list.innerHTML = getEmptyState('لا توجد اتصالات مسجلة.'); return; } contacts.forEach((c, i) => { list.innerHTML += `<li><div class="item-details"><div class="item-title"><span class="badge">${c.type}</span> ${c.name}</div><div class="item-meta">${c.purpose}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysContacts', ${i}, loadContacts)">حذف</button></div></li>`; }); }
-        function addContact() { const n = document.getElementById('contact-name').value, p = document.getElementById('contact-purpose').value; if(n){ const c = JSON.parse(localStorage.getItem('sysContacts')) || []; c.push({type:document.getElementById('contact-type').value, name:n, purpose:p}); localStorage.setItem('sysContacts', JSON.stringify(c)); document.getElementById('contact-name').value=''; document.getElementById('contact-purpose').value=''; loadContacts(); showToast('تم التسجيل ✓'); updateAnalytics();} }
+        function addContact() { const n = document.getElementById('contact-name').value, p = document.getElementById('contact-purpose').value; if(n){ const c = JSON.parse(localStorage.getItem('sysContacts')) || []; c.push({type:document.getElementById('contact-type').value, name:n, purpose:p}); localStorage.setItem('sysContacts', JSON.stringify(c)); clearDrafts(['contact-name', 'contact-purpose']); loadContacts(); showToast('تم التسجيل ✓'); updateAnalytics();} }
 
-        function deleteItem(key, idx, callback) { const items = JSON.parse(localStorage.getItem(key)) || []; items.splice(idx, 1); localStorage.setItem(key, JSON.stringify(items)); callback(); showToast('تم الحذف ✓'); updateAnalytics(); loadHistory(); }
+        function deleteItem(key, idx, callback) { const items = JSON.parse(localStorage.getItem(key)) || []; items.splice(idx, 1); localStorage.setItem(key, JSON.stringify(items)); callback(); showToast('تم الحذف بنجاح ✓'); updateAnalytics(); loadHistory(); showSaveIndicator(); }
 
+        let activityChart = null;
         function updateAnalytics() {
             const mCount = (JSON.parse(localStorage.getItem('sysMeetings')) || []).length;
             const dCount = (JSON.parse(localStorage.getItem('sysDocs')) || []).length;
             const cCount = (JSON.parse(localStorage.getItem('sysContacts')) || []).length;
-            const pendingActions = (JSON.parse(localStorage.getItem('sysActions')) || []).filter(a => !a.completed).length;
-            const pendingRoutes = (JSON.parse(localStorage.getItem('sysRouting')) || []).filter(r => !r.completed).length;
+            
+            const actions = JSON.parse(localStorage.getItem('sysActions')) || [];
+            const routes = JSON.parse(localStorage.getItem('sysRouting')) || [];
+            
+            const pendingActions = actions.filter(a => !a.completed);
+            const pendingRoutes = routes.filter(r => !r.completed);
             
             document.getElementById('count-meetings').innerText = mCount;
             document.getElementById('count-docs').innerText = dCount;
             document.getElementById('count-contacts').innerText = cCount;
-            document.getElementById('count-pending-actions').innerText = pendingActions;
-            document.getElementById('count-pending-routes').innerText = pendingRoutes;
+            document.getElementById('count-pending-actions').innerText = pendingActions.length;
+            document.getElementById('count-pending-routes').innerText = pendingRoutes.length;
 
             const insightBox = document.getElementById('ai-insight');
-            if (pendingRoutes > 0 || pendingActions > 0) {
-                insightBox.innerHTML = `⚠️ عاجل: لديك (${pendingActions}) قرارات معلقة، و (${pendingRoutes}) معاملات عالقة بانتظار المتابعة.`;
+            const highPrioRoutes = pendingRoutes.filter(r => r.prio === 'قصوى').length;
+            const highPrioActions = pendingActions.filter(a => a.prio === 'قصوى').length;
+            const totalHigh = highPrioRoutes + highPrioActions;
+
+            if (totalHigh > 0) {
+                insightBox.innerHTML = `🤖 تنبيه الذكاء الاصطناعي: م. عبدالمحسن، لديك <strong>(${totalHigh}) مهام ذات أولوية قصوى</strong> تتطلب تدخلك الفوري اليوم.`;
                 insightBox.style.color = "var(--danger)"; insightBox.style.borderColor = "var(--danger)"; insightBox.style.background = "rgba(239, 68, 68, 0.08)";
+            } else if (pendingRoutes.length > 0 || pendingActions.length > 0) {
+                insightBox.innerHTML = `💡 توجيه: يوجد لديك (${pendingActions.length}) قرارات و (${pendingRoutes.length}) معاملات عالقة قيد المعالجة.`;
+                insightBox.style.color = "var(--warning)"; insightBox.style.borderColor = "var(--warning)"; insightBox.style.background = "rgba(245, 158, 11, 0.08)";
             } else {
-                insightBox.innerHTML = "✅ الوضع ممتاز! جميع المعاملات منجزة ولا توجد مهام عالقة.";
+                insightBox.innerHTML = "🌟 ممتاز! لا توجد مهام أو معاملات معلقة. يومك يتميز بكفاءة تنظيمية عالية.";
                 insightBox.style.color = "var(--success)"; insightBox.style.borderColor = "var(--success)"; insightBox.style.background = "rgba(16, 185, 129, 0.08)";
             }
-            updateChart(mCount, dCount, cCount, pendingActions, pendingRoutes);
+            
+            updateChart(mCount, dCount, cCount, pendingActions.length, pendingRoutes.length);
         }
 
         function updateChart(m, d, c, a, r) {
@@ -484,7 +566,11 @@
             html2pdf().set({ margin: 10, filename: 'تقرير_م_عبدالمحسن.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => showToast('تم التصدير بنجاح ✓'));
         }
 
-        window.onload = () => { loadMeetings(); loadDocs(); loadContacts(); loadActions(); loadRouting(); loadHistory(); switchTab('tab-dashboard'); };
+        window.onload = () => { 
+            initAutoSaveDrafts(); 
+            loadMeetings(); loadDocs(); loadContacts(); loadActions(); loadRouting(); loadHistory(); 
+            switchTab('tab-dashboard'); 
+        };
     </script>
 </body>
 </html>
