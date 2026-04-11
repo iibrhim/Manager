@@ -51,27 +51,27 @@
         .tools-section { margin-top: auto; border-top: 1px solid var(--card-border); padding-top: 15px; }
 
         /* Main Content */
-        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; position: relative; scroll-behavior: smooth; }
-        .pdf-container { background: var(--bg-color); padding: 10px; border-radius: 10px; }
+        .main-content { flex: 1; padding: 30px 40px; overflow-y: auto; overflow-x: hidden; position: relative; scroll-behavior: smooth; }
+        .pdf-container { background: var(--bg-color); padding: 10px; border-radius: 10px; width: 100%; }
         .tab-content { display: none; animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
         /* Cards & Grid */
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 20px; width: 100%; }
+        .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); max-width: 100%; overflow: hidden; }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; }
         .card-header h3 { font-size: 1.2rem; color: var(--border-color); font-weight: 900; }
 
-        /* Stat Boxes */
-        .stats-container { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
-        .stat-box { flex: 1 1 18%; min-width: 120px; padding: 20px; border: 1.5px solid var(--card-border); border-radius: 16px; text-align: center; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.01); transition: transform 0.2s; cursor: default; }
+        /* Stats Grid (Updated for robust responsiveness) */
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; }
+        .stat-box { padding: 20px 15px; border: 1.5px solid var(--card-border); border-radius: 16px; text-align: center; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.01); transition: transform 0.2s; display: flex; flex-direction: column; justify-content: center; }
         .stat-box:hover { transform: translateY(-3px); border-color: var(--border-color); }
         .stat-num { font-size: 2.6rem; font-weight: 900; margin-bottom: 5px; line-height: 1; background: var(--grad-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .stat-num.danger { background: var(--grad-danger); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .stat-num.warning { background: var(--grad-warning); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .stat-num.info { background: var(--grad-info); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .stat-title { font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-title { font-size: 0.85rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; word-wrap: break-word; }
 
         /* Inputs & Buttons */
         .input-group { display: flex; gap: 12px; margin-bottom: 15px; flex-wrap: wrap; }
@@ -106,7 +106,7 @@
         .completed-task .item-title { text-decoration: line-through; }
 
         .insight-box { border: 2px solid var(--success); color: var(--success); padding: 18px; border-radius: 16px; font-weight: 800; margin-top: 20px; font-size: 1.05rem; display: flex; align-items: center; gap: 10px; transition: 0.3s; line-height: 1.5; }
-        .chart-container { position: relative; height: 280px; width: 100%; display: flex; justify-content: center; align-items: center; }
+        .chart-container { position: relative; height: 280px; width: 100%; display: block; overflow: hidden;}
         
         .toast-container { position: fixed; bottom: 90px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast { background: var(--border-color); color: var(--bg-color); padding: 14px 24px; border-radius: 12px; font-weight: 800; opacity: 0; transform: translateY(20px); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.3s forwards 2.5s; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
@@ -116,13 +116,12 @@
         #auto-save-indicator { font-size: 0.75rem; color: var(--success); text-align: center; margin-top: 10px; opacity: 0; transition: opacity 0.3s; font-weight: bold; }
 
         /* ==========================================
-           Mobile & Tablet Responsive Design
+           Mobile Responsive Design (Updated for Dashboard)
            ========================================== */
         @media (max-width: 850px) {
             body { flex-direction: column; }
             .mobile-header { display: flex; }
             
-            /* Bottom Navigation Bar */
             .sidebar { width: 100%; height: 70px; flex-direction: row; padding: 5px 10px; position: fixed; bottom: 0; left: 0; border-top: 1px solid var(--card-border); border-left: none; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); overflow-x: auto; overflow-y: hidden; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
             .sidebar::-webkit-scrollbar { display: none; }
             .brand, .tools-section, #auto-save-indicator { display: none; }
@@ -130,33 +129,35 @@
             .nav-btn { flex: 0 0 auto; text-align: center; padding: 10px 16px; margin: 0 4px; font-size: 0.9rem; border-radius: 20px; border: none; background: var(--bg-color); }
             .nav-btn.active { box-shadow: none; transform: scale(1.05); }
             
-            /* Main Content Adjustments */
-            .main-content { padding: 15px; padding-top: 75px; padding-bottom: 85px; }
+            .main-content { padding: 15px; padding-top: 75px; padding-bottom: 85px; width: 100%; }
             .card-grid { grid-template-columns: 1fr; gap: 15px; }
-            .card { padding: 20px; }
+            .card { padding: 18px; border-radius: 15px; }
             
-            /* Stat Boxes Stacking */
-            .stats-container { gap: 10px; }
-            .stat-box { flex: 1 1 45%; min-width: 110px; padding: 15px; }
-            .stat-num { font-size: 2.2rem; }
+            /* --- DASHBOARD MOBILE FIXES --- */
+            .stats-container { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .stat-box { padding: 15px 10px; min-width: 0; }
+            .stat-box:last-child:nth-child(odd) { grid-column: 1 / -1; } /* التمدد الذكي للمربع الخامس */
+            .stat-num { font-size: 1.8rem; }
+            .stat-title { font-size: 0.75rem; line-height: 1.4; letter-spacing: 0; }
             
-            /* Form Fields */
+            .insight-box { flex-direction: column; text-align: center; font-size: 0.9rem; padding: 15px; gap: 8px; }
+            .chart-container { height: 230px; }
+            
+            /* Form Fields & Lists */
             .input-group { flex-direction: column; gap: 12px; }
             input, select, textarea { width: 100%; min-width: 100%; }
             .btn-action { padding: 12px; font-size: 1rem; }
-            
-            /* List Items */
             ul.data-list li { flex-direction: column; align-items: flex-start; }
             .item-details { width: 100%; min-width: 100%; }
             .list-actions { display: flex; width: 100%; gap: 10px; margin-top: 12px; }
             .list-actions button { flex: 1; padding: 8px; font-size: 0.9rem; }
         }
 
-        /* Small Mobile Screens (iPhone SE, etc.) */
         @media (max-width: 400px) {
             .mobile-header h3 { font-size: 1rem; }
-            .stat-box { flex: 1 1 100%; } /* One stat per row on very small screens */
-            .chart-container { height: 220px; }
+            .stats-container { gap: 8px; }
+            .stat-box { padding: 12px 5px; }
+            .stat-title { font-size: 0.7rem; }
         }
     </style>
 </head>
@@ -167,7 +168,7 @@
     <header class="mobile-header">
         <div class="mobile-brand">
             <h3>أجندة م. عبدالمحسن اللويم</h3>
-            <p id="live-time-mobile">السبت، ١١ أبريل ٢٠٢٦ | ٨:٠٤:٥٢ ص</p>
+            <p id="live-time-mobile">السبت، ١١ أبريل ٢٠٢٦ | ٨:١٧:٥٧ ص</p>
         </div>
         <div class="mobile-tools">
             <button onclick="toggleDarkMode()" title="الوضع الليلي">🌓</button>
@@ -178,16 +179,16 @@
     <aside class="sidebar">
         <div class="brand">
             <h2>أجندة<br>م. عبدالمحسن اللويم</h2>
-            <p id="live-time">السبت، ١١ أبريل ٢٠٢٦ | ٨:٠٤:٥٢ ص</p>
+            <p id="live-time">السبت، ١١ أبريل ٢٠٢٦ | ٨:١٧:٥٧ ص</p>
         </div>
         
-        <button class="nav-btn active" onclick="switchTab('tab-dashboard')">📊 المؤشرات</button>
+        <button class="nav-btn" onclick="switchTab('tab-dashboard')">📊 المؤشرات</button>
         <button class="nav-btn" onclick="switchTab('tab-routing')">🔄 المعاملات</button>
         <button class="nav-btn" onclick="switchTab('tab-time')">📅 الاجتماعات</button>
         <button class="nav-btn" onclick="switchTab('tab-actions')">✅ القرارات</button>
         <button class="nav-btn" onclick="switchTab('tab-admin')">🗂️ الأرشيف</button>
         <button class="nav-btn" onclick="switchTab('tab-contact')">📞 الزوار</button>
-        <button class="nav-btn" onclick="switchTab('tab-history')">🏛️ السجل التاريخي</button>
+        <button class="nav-btn active" onclick="switchTab('tab-history')">🏛️ السجل التاريخي</button>
         
         <div class="tools-section" style="display: none;">
             <button class="nav-btn" onclick="document.getElementById('import-file').click()" style="width: 100%; justify-content: center; font-size: 0.85rem;">استيراد بيانات 📂</button>
@@ -201,20 +202,20 @@
 
     <main class="main-content" id="report-content">
         <div class="pdf-container">
-            <div id="tab-dashboard" class="tab-content active">
+            <div id="tab-dashboard" class="tab-content">
                 <div class="card-grid">
                     <div class="card" style="grid-column: 1 / -1;">
                         <div class="card-header"><h3>ملخص العمليات الحي</h3></div>
                         <div class="stats-container">
-                            <div class="stat-box"><div class="stat-num" id="count-meetings">1</div><div class="stat-title">اجتماعات ومواعيد</div></div>
-                            <div class="stat-box"><div class="stat-num" id="count-docs">1</div><div class="stat-title">مستندات مؤرشفة</div></div>
-                            <div class="stat-box" style="border-color: rgba(59, 130, 246, 0.3);"><div class="stat-num info" id="count-contacts">3</div><div class="stat-title" style="color: var(--info);">زوار واتصالات</div></div>
-                            <div class="stat-box" style="border-color: rgba(245, 158, 11, 0.3);"><div class="stat-num warning" id="count-pending-actions">1</div><div class="stat-title" style="color: var(--warning);">قرارات قيد التنفيذ</div></div>
+                            <div class="stat-box"><div class="stat-num" id="count-meetings">2</div><div class="stat-title">اجتماعات ومواعيد</div></div>
+                            <div class="stat-box"><div class="stat-num" id="count-docs">2</div><div class="stat-title">مستندات مؤرشفة</div></div>
+                            <div class="stat-box" style="border-color: rgba(59, 130, 246, 0.3);"><div class="stat-num info" id="count-contacts">4</div><div class="stat-title" style="color: var(--info);">زوار واتصالات</div></div>
+                            <div class="stat-box" style="border-color: rgba(245, 158, 11, 0.3);"><div class="stat-num warning" id="count-pending-actions">2</div><div class="stat-title" style="color: var(--warning);">قرارات قيد التنفيذ</div></div>
                             <div class="stat-box" style="border-color: rgba(239, 68, 68, 0.3);"><div class="stat-num danger" id="count-pending-routes">2</div><div class="stat-title" style="color: var(--danger);">معاملات عالقة</div></div>
                         </div>
                         <div id="ai-insight" class="insight-box" style="color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.08);">🔴 <strong>تنبيه عاجل:</strong> م. عبدالمحسن، لديك <strong>(2) مهام ذات أولوية قصوى</strong> تتطلب المتابعة الفورية اليوم.</div>
                     </div>
-                    <div class="card" style="grid-column: 1 / -1;"><div class="card-header"><h3>التوزيع البياني</h3></div><div class="chart-container"><canvas id="activityChart" style="box-sizing: border-box; display: block; height: 280px; width: 1501.2px;" width="1491" height="278"></canvas></div></div>
+                    <div class="card" style="grid-column: 1 / -1;"><div class="card-header"><h3>التوزيع البياني</h3></div><div class="chart-container"><canvas id="activityChart" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div></div>
                 </div>
             </div>
 
@@ -293,7 +294,7 @@
                 </div>
             </div>
 
-            <div id="tab-history" class="tab-content">
+            <div id="tab-history" class="tab-content active">
                 <div class="card-grid">
                     <div class="card" style="grid-column: 1 / -1;">
                         <div class="card-header"><h3>🏛️ السجل التاريخي للأعمال المنجزة</h3></div>
@@ -532,7 +533,7 @@
             const highPrioActions = pendingActions.filter(a => a.prio === 'قصوى').length;
             const totalHigh = highPrioRoutes + highPrioActions;
 
-            // التعديل هنا لإزالة ذكر الذكاء الاصطناعي وجعل الصياغة عملية وإدارية
+            // تم إزالة كلمة الذكاء الاصطناعي وجعل الصياغة إدارية ورسمية
             if (totalHigh > 0) {
                 insightBox.innerHTML = `🔴 <strong>تنبيه عاجل:</strong> م. عبدالمحسن، لديك <strong>(${totalHigh}) مهام ذات أولوية قصوى</strong> تتطلب المتابعة الفورية اليوم.`;
                 insightBox.style.color = "var(--danger)"; insightBox.style.borderColor = "var(--danger)"; insightBox.style.background = "rgba(239, 68, 68, 0.08)";
@@ -655,10 +656,10 @@
 <script id="static-data-script">
                 window.STATIC_DATA = {
                     sysRouting: [{"title":"متابعة عرض سعر قسم الميكانيكا","dept":"المالية","date":"2026-04-16","prio":"متوسطة","completed":false},{"title":"تعميد شراء مضخات تصريف الأمطار","dept":"المشتريات","date":"2026-04-13","prio":"قصوى","completed":false}],
-                    sysMeetings: [{"date":"2026-04-15","time":"04:01","title":"اجتماع مع د.محمد الكشي","agenda":"مناقشة شراء معدات كهربائية"}],
-                    sysActions: [{"desc":"قرار اداري بإعادة جدولة شفتات المهندسين","person":"م.عبدالمحسن","date":"2026-04-13","prio":"قصوى","completed":false}],
-                    sysDocs: [{"type":"مذكرة داخلية","title":"مراجعة أصول الأقسام","date":"2026-04-11T05:00:15.567Z"}],
-                    sysContacts: [{"type":"زائر مكتبي","name":"م.حلاوه","purpose":"لم يذكر سبب"},{"type":"زائر مكتبي","name":"مجاهد صلاح","purpose":"الاستفسار بشأن الجداول والورديات في قسم المدني"},{"type":"مكالمة واردة","name":"أ.عبداللطيف العرادي","purpose":"طلب مقابلتك حين عودتك ووضح ان السبب غير عالية الأهمية"}],
+                    sysMeetings: [{"date":"2026-04-15","time":"04:01","title":"اجتماع مع د.محمد الكشي","agenda":"مناقشة شراء معدات كهربائية"},{"date":"2026-04-17","time":"11:15","title":"اجتماع مع مقاول الباطن","agenda":""}],
+                    sysActions: [{"desc":"قرار اداري بإعادة جدولة شفتات المهندسين","person":"م.عبدالمحسن","date":"2026-04-13","prio":"قصوى","completed":false},{"desc":"قرار مراجعة غياب :......................","person":"م.عبدالمحسن","date":"2026-04-17","prio":"عادية","completed":false}],
+                    sysDocs: [{"type":"مذكرة داخلية","title":"مراجعة أصول الأقسام","date":"2026-04-11T05:00:15.567Z"},{"type":"تقرير فني","title":"مراجعة الصيانة الوقائية للمصاعد","date":"2026-04-11T05:16:57.312Z"}],
+                    sysContacts: [{"type":"زائر مكتبي","name":"م.حلاوه","purpose":"لم يذكر سبب"},{"type":"زائر مكتبي","name":"مجاهد صلاح","purpose":"الاستفسار بشأن الجداول والورديات في قسم المدني"},{"type":"مكالمة واردة","name":"أ.عبداللطيف العرادي","purpose":"طلب مقابلتك حين عودتك ووضح ان السبب غير عالية الأهمية"},{"type":"مكالمة واردة","name":"قسم الالكترونيات / حيدر العيسى","purpose":"لم يذكر سبب الاتصال"}],
                     theme: "light"
                 };
                 
