@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
+<html lang="ar" dir="rtl" data-theme="light"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أجندة م. عبدالمحسن اللويم</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>أجندة م. عبدالمحسن اللويم - لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&amp;display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -112,7 +111,6 @@
             .mobile-header { display: flex; }
             .sidebar { width: 100%; height: 75px; flex-direction: row; padding: 5px; position: fixed; bottom: 0; left: 0; border-top: 1px solid var(--card-border); border-left: none; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); overflow-x: auto; overflow-y: hidden; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
             .sidebar::-webkit-scrollbar { display: none; }
-            /* هنا يتم إخفاء أدوات الكمبيوتر بالكامل في الجوال */
             .brand, .tools-section, #auto-save-indicator { display: none; }
             .nav-btn { flex: 0 0 auto; text-align: center; padding: 10px 18px; margin: 0 4px; font-size: 0.9rem; border-radius: 20px; border: none; background: var(--bg-color); }
             .nav-btn.active { box-shadow: none; transform: scale(1.05); }
@@ -131,13 +129,13 @@
     </style>
 </head>
 <body>
-    <div class="toast-container" id="toast-container"></div>
+    <div class="toast-container" id="toast-container"><div class="toast">⏳ جاري تجهيز صفحة النشر لجيت هب...</div></div>
     <input type="file" id="import-file" style="display:none" accept=".json" onchange="importBackup(event)">
 
     <header class="mobile-header">
         <div class="mobile-brand">
             <h3>أجندة م. عبدالمحسن اللويم</h3>
-            <p id="live-time-mobile">جاري التحميل...</p>
+            <p id="live-time-mobile">السبت، ١١ أبريل ٢٠٢٦ | ٧:٤٢:٢٨ ص</p>
         </div>
         <div class="mobile-tools">
             <button onclick="toggleDarkMode()">🌓</button>
@@ -148,7 +146,7 @@
     <aside class="sidebar">
         <div class="brand">
             <h2>أجندة<br>م. عبدالمحسن اللويم</h2>
-            <p id="live-time">جاري التحميل...</p>
+            <p id="live-time">السبت، ١١ أبريل ٢٠٢٦ | ٧:٤٢:٢٨ ص</p>
         </div>
         
         <button class="nav-btn active" onclick="switchTab('tab-dashboard')">📊 المؤشرات</button>
@@ -159,12 +157,13 @@
         <button class="nav-btn" onclick="switchTab('tab-contact')">📞 الزوار</button>
         <button class="nav-btn" onclick="switchTab('tab-history')">🏛️ السجل التاريخي</button>
         
-        <div class="tools-section">
+        <div class="tools-section" style="display: none;">
             <button class="nav-btn" onclick="document.getElementById('import-file').click()" style="width: 100%; justify-content: center; font-size: 0.85rem;">استيراد بيانات 📂</button>
             <button class="nav-btn" onclick="exportBackup()" style="width: 100%; justify-content: center; font-size: 0.85rem;">نسخة احتياطية 💾</button>
             <button class="nav-btn" onclick="toggleDarkMode()" style="width: 100%; justify-content: center; font-size: 0.85rem;">الوضع الليلي 🌓</button>
             <button class="btn-action" onclick="exportToPDF()" style="margin-top: 10px;">تصدير التقرير 📥</button>
-            <div id="auto-save-indicator">☁️ تم حفظ التغييرات تلقائياً</div>
+            <button class="btn-action" onclick="exportForGitHub()" style="margin-top: 10px; background: var(--info); color: white; border-color: var(--info); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);">🚀 استخراج تقرير GitHub</button>
+            <div id="auto-save-indicator" style="opacity: 0;">☁️ تم حفظ التغييرات تلقائياً</div>
         </div>
     </aside>
 
@@ -175,21 +174,21 @@
                     <div class="card" style="grid-column: 1 / -1;">
                         <div class="card-header"><h3>ملخص العمليات الحي</h3></div>
                         <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-                            <div class="stat-box"><div class="stat-num" id="count-meetings">0</div><div class="stat-title">اجتماعات ومواعيد</div></div>
+                            <div class="stat-box"><div class="stat-num" id="count-meetings">3</div><div class="stat-title">اجتماعات ومواعيد</div></div>
                             <div class="stat-box"><div class="stat-num" id="count-docs">0</div><div class="stat-title">مستندات مؤرشفة</div></div>
-                            <div class="stat-box" style="border-color: rgba(59, 130, 246, 0.3);"><div class="stat-num info" id="count-contacts">0</div><div class="stat-title" style="color: var(--info);">زوار واتصالات</div></div>
-                            <div class="stat-box" style="border-color: rgba(245, 158, 11, 0.3);"><div class="stat-num warning" id="count-pending-actions">0</div><div class="stat-title" style="color: var(--warning);">قرارات قيد التنفيذ</div></div>
+                            <div class="stat-box" style="border-color: rgba(59, 130, 246, 0.3);"><div class="stat-num info" id="count-contacts">4</div><div class="stat-title" style="color: var(--info);">زوار واتصالات</div></div>
+                            <div class="stat-box" style="border-color: rgba(245, 158, 11, 0.3);"><div class="stat-num warning" id="count-pending-actions">2</div><div class="stat-title" style="color: var(--warning);">قرارات قيد التنفيذ</div></div>
                             <div class="stat-box" style="border-color: rgba(239, 68, 68, 0.3);"><div class="stat-num danger" id="count-pending-routes">0</div><div class="stat-title" style="color: var(--danger);">معاملات عالقة</div></div>
                         </div>
-                        <div id="ai-insight" class="insight-box">⏳ بانتظار إدخال البيانات...</div>
+                        <div id="ai-insight" class="insight-box" style="color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.08);">🤖 تنبيه الذكاء الاصطناعي: م. عبدالمحسن، لديك <strong>(1) مهام ذات أولوية قصوى</strong> تتطلب تدخلك الفوري اليوم.</div>
                     </div>
-                    <div class="card" style="grid-column: 1 / -1;"><div class="card-header"><h3>التوزيع البياني</h3></div><div class="chart-container"><canvas id="activityChart"></canvas></div></div>
+                    <div class="card" style="grid-column: 1 / -1;"><div class="card-header"><h3>التوزيع البياني</h3></div><div class="chart-container"><canvas id="activityChart" style="box-sizing: border-box; display: block; height: 280px; width: 1501.2px;" width="1491" height="278"></canvas></div></div>
                 </div>
             </div>
 
             <div id="tab-routing" class="tab-content">
                 <div class="card-grid">
-                    <div class="card">
+                    <div class="card input-form-card" style="display: none;">
                         <div class="card-header"><h3>إرسال معاملة للمتابعة</h3></div>
                         <div class="input-group"><input type="text" id="route-title" placeholder="موضوع المعاملة..." class="auto-draft"></div>
                         <div class="input-group">
@@ -205,7 +204,7 @@
 
             <div id="tab-time" class="tab-content">
                 <div class="card-grid">
-                    <div class="card">
+                    <div class="card input-form-card" style="display: none;">
                         <div class="card-header"><h3>جدولة اجتماع جديد</h3></div>
                         <div class="input-group"><input type="date" id="meet-date" class="auto-draft" style="flex: 1;"><input type="time" id="meet-time" class="auto-draft" style="flex: 1;"></div>
                         <div class="input-group"><input type="text" id="meet-title" class="auto-draft" placeholder="عنوان الاجتماع..." style="width: 100%;"></div>
@@ -218,7 +217,7 @@
 
             <div id="tab-actions" class="tab-content">
                 <div class="card-grid">
-                    <div class="card">
+                    <div class="card input-form-card" style="display: none;">
                         <div class="card-header"><h3>تسجيل قرار أو توصية</h3></div>
                         <div class="input-group"><input type="text" id="action-desc" class="auto-draft" placeholder="نص القرار..."></div>
                         <div class="input-group">
@@ -234,7 +233,7 @@
 
             <div id="tab-admin" class="tab-content">
                 <div class="card-grid">
-                    <div class="card">
+                    <div class="card input-form-card" style="display: none;">
                         <div class="card-header"><h3>أرشفة مستند</h3></div>
                         <div class="input-group">
                             <select id="doc-type" class="auto-draft"><option value="خطاب صادر">خطاب صادر</option><option value="تقرير فني">تقرير فني</option><option value="مذكرة داخلية">مذكرة داخلية</option></select>
@@ -249,7 +248,7 @@
 
             <div id="tab-contact" class="tab-content">
                 <div class="card-grid">
-                    <div class="card">
+                    <div class="card input-form-card" style="display: none;">
                         <div class="card-header"><h3>تسجيل زائر أو اتصال</h3></div>
                         <div class="input-group">
                             <select id="contact-type" class="auto-draft"><option value="مكالمة واردة">مكالمة واردة</option><option value="زائر مكتبي">زائر مكتبي</option></select>
@@ -278,23 +277,6 @@
     </main>
 
     <script>
-        // --- 1. محرك حقن البيانات (من السكربت الأول) ---
-        const injectedData = {"sysMeetings": [], "sysRouting": [], "sysActions": [], "sysDocs": [], "sysContacts": []};
-        const injectedVersion = "1775880883";
-        const localVersion = localStorage.getItem('db_version');
-        
-        if (injectedVersion !== localVersion && injectedData && Object.keys(injectedData).length > 0) {
-            if(injectedData.sysMeetings) localStorage.setItem('sysMeetings', typeof injectedData.sysMeetings === 'string' ? injectedData.sysMeetings : JSON.stringify(injectedData.sysMeetings));
-            if(injectedData.sysRouting) localStorage.setItem('sysRouting', typeof injectedData.sysRouting === 'string' ? injectedData.sysRouting : JSON.stringify(injectedData.sysRouting));
-            if(injectedData.sysActions) localStorage.setItem('sysActions', typeof injectedData.sysActions === 'string' ? injectedData.sysActions : JSON.stringify(injectedData.sysActions));
-            if(injectedData.sysDocs) localStorage.setItem('sysDocs', typeof injectedData.sysDocs === 'string' ? injectedData.sysDocs : JSON.stringify(injectedData.sysDocs));
-            if(injectedData.sysContacts) localStorage.setItem('sysContacts', typeof injectedData.sysContacts === 'string' ? injectedData.sysContacts : JSON.stringify(injectedData.sysContacts));
-            if(injectedData.theme) { localStorage.setItem('theme', injectedData.theme); document.documentElement.setAttribute('data-theme', injectedData.theme); }
-            
-            localStorage.setItem('db_version', injectedVersion);
-        }
-
-        // --- 2. إعدادات الواجهة والوضع الليلي ---
         const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
         if (currentTheme) { document.documentElement.setAttribute('data-theme', currentTheme); }
         
@@ -325,7 +307,6 @@
             container.appendChild(toast); setTimeout(() => { toast.remove(); }, 3000);
         }
 
-        // --- 3. أدوات الواجهة المتطورة (الحفظ التلقائي والتاريخ الذكي) ---
         function formatSmartDate(dateStr) {
             if(!dateStr) return 'تاريخ غير محدد';
             try { return new Intl.DateTimeFormat('ar-SA', { dateStyle: 'medium' }).format(new Date(dateStr)); } 
@@ -353,7 +334,6 @@
             setTimeout(() => ind.style.opacity = '0', 2000);
         }
 
-        // --- 4. إدارة البيانات والاستيراد/التصدير ---
         function exportBackup() {
             const data = {
                 sysMeetings: localStorage.getItem('sysMeetings'), sysRouting: localStorage.getItem('sysRouting'),
@@ -380,8 +360,6 @@
                     if(data.sysDocs) localStorage.setItem('sysDocs', data.sysDocs);
                     if(data.sysContacts) localStorage.setItem('sysContacts', data.sysContacts);
                     if(data.theme) { localStorage.setItem('theme', data.theme); document.documentElement.setAttribute('data-theme', data.theme); }
-                    
-                    localStorage.setItem('db_version', injectedVersion);
                     showToast('تم استعادة البيانات بنجاح 🔄');
                     setTimeout(() => location.reload(), 1500); 
                 } catch(err) { showToast('❌ خطأ في ملف النسخة الاحتياطية'); }
@@ -399,7 +377,6 @@
 
         function getEmptyState(msg) { return `<div style="text-align:center; padding:30px; color:var(--text-muted); font-weight:800; font-size:1rem; width:100%;">${msg}</div>`; }
 
-        // --- 5. تحميل ومعالجة القوائم والسجل التاريخي ---
         function loadHistory() {
             const historyList = document.getElementById('history-list');
             if(!historyList) return;
@@ -440,7 +417,7 @@
                 else statusBadge = `<span class="badge badge-info">عند: ${r.dept}</span>`;
                 
                 let toggleBtn = r.completed ? `<button class="btn-action btn-small" onclick="toggleRoutingStatus(${i})">فتح</button>` : `<button class="btn-action btn-small btn-success" onclick="toggleRoutingStatus(${i})">تم ✓</button>`;
-                list.innerHTML += `<li class="${rowClass}"><div class="item-details"><div class="item-title">${r.title}</div><div class="item-meta">🏢 ${r.dept} | 📅 ${formatSmartDate(r.date)} <br> ${prioBadge} ${statusBadge}</div></div><div class="list-actions">${toggleBtn}<button class="btn-action btn-small btn-danger" onclick="deleteItem('sysRouting', ${i}, loadRouting)">حذف</button></div></li>`;
+                list.innerHTML += `<li class="${rowClass}"><div class="item-details"><div class="item-title">${r.title}</div><div class="item-meta">🏢 ${r.dept} | 📅 ${formatSmartDate(r.date)} <br> ${prioBadge} ${statusBadge}</div></div><div class="list-actions control-btn">${toggleBtn}<button class="btn-action btn-small btn-danger" onclick="deleteItem('sysRouting', ${i}, loadRouting)">حذف</button></div></li>`;
             });
         }
         function addRouting() { 
@@ -458,7 +435,7 @@
         function loadMeetings() {
             const meetings = JSON.parse(localStorage.getItem('sysMeetings')) || []; const list = document.getElementById('meetings-list'); list.innerHTML = '';
             if (meetings.length === 0) { list.innerHTML = getEmptyState('لا توجد اجتماعات.'); return; }
-            meetings.forEach((m, i) => { list.innerHTML += `<li><div class="item-details"><div class="item-title">${m.title}</div><div class="item-meta">📅 ${formatSmartDate(m.date)} | 🕒 ${m.time} <br> 📌 ${m.agenda}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysMeetings', ${i}, loadMeetings)">إنهاء وإزالة</button></div></li>`; });
+            meetings.forEach((m, i) => { list.innerHTML += `<li><div class="item-details"><div class="item-title">${m.title}</div><div class="item-meta">📅 ${formatSmartDate(m.date)} | 🕒 ${m.time} <br> 📌 ${m.agenda}</div></div><div class="list-actions control-btn"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysMeetings', ${i}, loadMeetings)">إنهاء وإزالة</button></div></li>`; });
         }
         function addMeeting() { 
             const dt = document.getElementById('meet-date').value, time = document.getElementById('meet-time').value, title = document.getElementById('meet-title').value.trim(), agenda = document.getElementById('meet-agenda').value.trim(); 
@@ -479,7 +456,7 @@
                 let statusBadge = a.completed ? `<span class="badge badge-success">مكتمل</span>` : (a.date && a.date < today ? `<span class="badge badge-danger">متأخر</span>` : `<span class="badge badge-warning">جاري</span>`);
                 let toggleBtn = a.completed ? `<button class="btn-action btn-small" onclick="toggleActionStatus(${i})">فتح</button>` : `<button class="btn-action btn-small btn-success" onclick="toggleActionStatus(${i})">إنجاز ✓</button>`;
                 
-                list.innerHTML += `<li class="${a.completed ? 'completed-task' : ''}"><div class="item-details"><div class="item-title">${a.desc}</div><div class="item-meta">👤 ${a.person} | 📅 ${formatSmartDate(a.date)} <br> ${prioBadge} ${statusBadge}</div></div><div class="list-actions">${toggleBtn}<button class="btn-action btn-small btn-danger" onclick="deleteItem('sysActions', ${i}, loadActions)">حذف</button></div></li>`;
+                list.innerHTML += `<li class="${a.completed ? 'completed-task' : ''}"><div class="item-details"><div class="item-title">${a.desc}</div><div class="item-meta">👤 ${a.person} | 📅 ${formatSmartDate(a.date)} <br> ${prioBadge} ${statusBadge}</div></div><div class="list-actions control-btn">${toggleBtn}<button class="btn-action btn-small btn-danger" onclick="deleteItem('sysActions', ${i}, loadActions)">حذف</button></div></li>`;
             });
         }
         function addAction() { 
@@ -491,11 +468,11 @@
         }
         function toggleActionStatus(i) { const a = JSON.parse(localStorage.getItem('sysActions')); a[i].completed = !a[i].completed; localStorage.setItem('sysActions', JSON.stringify(a)); loadActions(); updateAnalytics(); loadHistory(); showSaveIndicator(); }
 
-        function loadDocs(f='') { const docs = JSON.parse(localStorage.getItem('sysDocs')) || []; const list = document.getElementById('archive-list'); list.innerHTML = ''; const flt = docs.filter(d=>d.title.includes(f)); if(flt.length===0){list.innerHTML=getEmptyState('الأرشيف فارغ'); return;} flt.forEach((d,i)=>{list.innerHTML+=`<li><div class="item-details"><div class="item-title"><span class="badge">${d.type}</span> ${d.title}</div><div class="item-meta">${formatSmartDate(d.date)}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysDocs', ${docs.indexOf(d)}, loadDocs)">حذف</button></div></li>`;}); }
+        function loadDocs(f='') { const docs = JSON.parse(localStorage.getItem('sysDocs')) || []; const list = document.getElementById('archive-list'); list.innerHTML = ''; const flt = docs.filter(d=>d.title.includes(f)); if(flt.length===0){list.innerHTML=getEmptyState('الأرشيف فارغ'); return;} flt.forEach((d,i)=>{list.innerHTML+=`<li><div class="item-details"><div class="item-title"><span class="badge">${d.type}</span> ${d.title}</div><div class="item-meta">${formatSmartDate(d.date)}</div></div><div class="list-actions control-btn"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysDocs', ${docs.indexOf(d)}, loadDocs)">حذف</button></div></li>`;}); }
         function archiveDoc() { const t=document.getElementById('doc-title').value; if(t){ const docs=JSON.parse(localStorage.getItem('sysDocs'))||[]; docs.push({type:document.getElementById('doc-type').value, title:t, date:new Date().toISOString()}); localStorage.setItem('sysDocs',JSON.stringify(docs)); clearDrafts(['doc-title', 'doc-notes']); loadDocs(); updateAnalytics();} }
         function filterArchive() { loadDocs(document.getElementById('search-archive').value); }
 
-        function loadContacts() { const contacts = JSON.parse(localStorage.getItem('sysContacts')) || []; const list = document.getElementById('contacts-list'); list.innerHTML = ''; if (contacts.length === 0) { list.innerHTML = getEmptyState('لا توجد اتصالات مسجلة.'); return; } contacts.forEach((c, i) => { list.innerHTML += `<li><div class="item-details"><div class="item-title"><span class="badge">${c.type}</span> ${c.name}</div><div class="item-meta">${c.purpose}</div></div><div class="list-actions"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysContacts', ${i}, loadContacts)">حذف</button></div></li>`; }); }
+        function loadContacts() { const contacts = JSON.parse(localStorage.getItem('sysContacts')) || []; const list = document.getElementById('contacts-list'); list.innerHTML = ''; if (contacts.length === 0) { list.innerHTML = getEmptyState('لا توجد اتصالات مسجلة.'); return; } contacts.forEach((c, i) => { list.innerHTML += `<li><div class="item-details"><div class="item-title"><span class="badge">${c.type}</span> ${c.name}</div><div class="item-meta">${c.purpose}</div></div><div class="list-actions control-btn"><button class="btn-action btn-small btn-danger" onclick="deleteItem('sysContacts', ${i}, loadContacts)">حذف</button></div></li>`; }); }
         function addContact() { const n = document.getElementById('contact-name').value, p = document.getElementById('contact-purpose').value; if(n){ const c = JSON.parse(localStorage.getItem('sysContacts')) || []; c.push({type:document.getElementById('contact-type').value, name:n, purpose:p}); localStorage.setItem('sysContacts', JSON.stringify(c)); clearDrafts(['contact-name', 'contact-purpose']); loadContacts(); showToast('تم التسجيل ✓'); updateAnalytics();} }
 
         function deleteItem(key, idx, callback) { const items = JSON.parse(localStorage.getItem(key)) || []; items.splice(idx, 1); localStorage.setItem(key, JSON.stringify(items)); callback(); showToast('تم الحذف بنجاح ✓'); updateAnalytics(); loadHistory(); showSaveIndicator(); }
@@ -566,11 +543,111 @@
             html2pdf().set({ margin: 10, filename: 'تقرير_م_عبدالمحسن.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => showToast('تم التصدير بنجاح ✓'));
         }
 
+        // --- دالة استخراج تقرير جيت هب السحرية ---
+        function exportForGitHub() {
+            showToast('⏳ جاري تجهيز صفحة النشر لجيت هب...');
+            
+            // 1. جمع البيانات الحالية
+            const exportData = {
+                sysRouting: localStorage.getItem('sysRouting') || "[]",
+                sysMeetings: localStorage.getItem('sysMeetings') || "[]",
+                sysActions: localStorage.getItem('sysActions') || "[]",
+                sysDocs: localStorage.getItem('sysDocs') || "[]",
+                sysContacts: localStorage.getItem('sysContacts') || "[]",
+                theme: localStorage.getItem('theme') || "light"
+            };
+
+            // 2. استنساخ الواجهة لتعديلها قبل الاستخراج
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(document.documentElement.outerHTML, 'text/html');
+
+            // 3. تحويل النسخة المستخرجة إلى "للقراءة فقط" بإخفاء أدوات الإدخال والحذف
+            const tools = doc.querySelector('.tools-section');
+            if(tools) tools.style.display = 'none'; // إخفاء القائمة الجانبية للأدوات
+            
+            doc.querySelectorAll('.input-form-card, .control-btn').forEach(el => {
+                el.style.display = 'none'; // إخفاء كروت الإدخال وأزرار التحكم
+            });
+
+            // تفريغ القوائم في النسخة المستنسخة لتجهيزها للحقن النظيف
+            ['routing-list', 'meetings-list', 'actions-list', 'archive-list', 'contacts-list', 'history-list'].forEach(id => {
+                const el = doc.getElementById(id);
+                if(el) el.innerHTML = '';
+            });
+
+            // 4. إزالة السكربت القديم إذا كان موجوداً
+            const oldScript = doc.getElementById('static-data-script');
+            if(oldScript) oldScript.remove();
+
+            // 5. حقن البيانات المحدثة ككود برمجي ثابت يعمل فور فتح الرابط الحي
+            const scriptContent = `
+                window.STATIC_DATA = {
+                    sysRouting: ${exportData.sysRouting === "[]" ? "[]" : exportData.sysRouting},
+                    sysMeetings: ${exportData.sysMeetings === "[]" ? "[]" : exportData.sysMeetings},
+                    sysActions: ${exportData.sysActions === "[]" ? "[]" : exportData.sysActions},
+                    sysDocs: ${exportData.sysDocs === "[]" ? "[]" : exportData.sysDocs},
+                    sysContacts: ${exportData.sysContacts === "[]" ? "[]" : exportData.sysContacts},
+                    theme: "${exportData.theme}"
+                };
+                
+                // حفظ البيانات في متصفح الزائر وإعادة تحميل الصفحة لتعرض القوائم
+                Object.keys(window.STATIC_DATA).forEach(key => {
+                    if(window.STATIC_DATA[key]) {
+                        localStorage.setItem(key, typeof window.STATIC_DATA[key] === 'string' ? window.STATIC_DATA[key] : JSON.stringify(window.STATIC_DATA[key]));
+                    }
+                });
+                
+                // تحديث القوائم تلقائياً بعد استلام البيانات
+                if(typeof loadMeetings === 'function') {
+                    loadMeetings(); loadDocs(); loadContacts(); loadActions(); loadRouting(); loadHistory(); updateAnalytics();
+                }
+            `;
+
+            const staticScript = doc.createElement('script');
+            staticScript.id = 'static-data-script';
+            staticScript.textContent = scriptContent;
+            doc.body.appendChild(staticScript);
+
+            // 6. تحميل الملف الجاهز للمستخدم
+            const finalHtml = "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+            const blob = new Blob([finalHtml], { type: 'text/html;charset=utf-8' });
+            
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'index.html'; // الاسم المثالي للرفع 
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            showToast('✅ تم استخراج التقرير! انقله إلى مجلدك لرفعه عبر جيت هب.');
+        }
+
         window.onload = () => { 
             initAutoSaveDrafts(); 
             loadMeetings(); loadDocs(); loadContacts(); loadActions(); loadRouting(); loadHistory(); 
             switchTab('tab-dashboard'); 
         };
     </script>
-</body>
-</html>
+
+<script id="static-data-script">
+                window.STATIC_DATA = {
+                    sysRouting: [],
+                    sysMeetings: [{"date":"2026-04-17","time":"09:16","title":"بسم الله ، ما شاء الله كان","agenda":"بسم الله ، ما شاء الله كان"},{"date":"2026-04-18","time":"00:17","title":"بسم الله ، ما شاء الله كان","agenda":"بسم الله ، ما شاء الله كان\nبسم الله ، ما شاء الله كان"},{"date":"2026-04-18","time":"04:41","title":"بسم الله","agenda":"بسم الله"}],
+                    sysActions: [{"desc":"بسم الله ، ما شاء الله كان","person":"بسم الله ، ما شاء الله كان","date":"2026-04-16","prio":"عادية","completed":false},{"desc":"بسم الله","person":"بسم الله","date":"2026-04-16","prio":"قصوى","completed":false}],
+                    sysDocs: [],
+                    sysContacts: [{"type":"مكالمة واردة","name":"بسم الله ، ما شاء الله كان","purpose":"بسم الله ، ما شاء الله كان"},{"type":"زائر مكتبي","name":"بسم الله ، ما شاء الله كان","purpose":"بسم الله ، ما شاء الله كان"},{"type":"مكالمة واردة","name":"بسم الله ، ما شاء الله كان","purpose":"بسم الله ، ما شاء الله كان"},{"type":"مكالمة واردة","name":"بسم الله","purpose":"بسم الله"}],
+                    theme: "light"
+                };
+                
+                // حفظ البيانات في متصفح الزائر وإعادة تحميل الصفحة لتعرض القوائم
+                Object.keys(window.STATIC_DATA).forEach(key => {
+                    if(window.STATIC_DATA[key]) {
+                        localStorage.setItem(key, typeof window.STATIC_DATA[key] === 'string' ? window.STATIC_DATA[key] : JSON.stringify(window.STATIC_DATA[key]));
+                    }
+                });
+                
+                // تحديث القوائم تلقائياً بعد استلام البيانات
+                if(typeof loadMeetings === 'function') {
+                    loadMeetings(); loadDocs(); loadContacts(); loadActions(); loadRouting(); loadHistory(); updateAnalytics();
+                }
+            </script></body></html>
