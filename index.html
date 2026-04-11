@@ -21,7 +21,7 @@
         .brand h2 { font-size: 1.4rem; color: var(--border-color); font-weight: 900; line-height: 1.3;}
         .brand p { font-size: 0.85rem; color: var(--text-muted); font-weight: 700; margin-top: 5px; }
         
-        .nav-btn { background: transparent; color: var(--text-main); border: 1.5px solid transparent; padding: 12px 15px; border-radius: 14px; cursor: pointer; text-align: right; font-weight: 800; margin-bottom: 8px; width: 100%; transition: 0.2s; }
+        .nav-btn { background: transparent; color: var(--text-main); border: 1.5px solid transparent; padding: 12px 15px; border-radius: 14px; cursor: pointer; text-align: right; font-weight: 800; margin-bottom: 8px; width: 100%; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
         .nav-btn:hover { background-color: var(--accent-color); transform: translateX(-4px); }
         .nav-btn.active { background-color: var(--border-color); color: var(--bg-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
@@ -44,12 +44,13 @@
         .badge { padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; font-weight: 900; border: 1px solid var(--border-color); display:inline-block; }
         .badge-success { border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.1); }
         .badge-warning { border-color: var(--warning); color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+        .badge-info { border-color: var(--info); color: var(--info); background: rgba(59, 130, 246, 0.1); }
         
         @media (max-width: 850px) {
             body { flex-direction: column; }
             .sidebar { width: 100%; height: 75px; flex-direction: row; position: fixed; bottom: 0; overflow-x: auto; padding: 5px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); }
             .brand { display: none; }
-            .nav-btn { flex: 0 0 auto; text-align: center; padding: 10px 18px; border-radius: 20px; }
+            .nav-btn { flex: 0 0 auto; text-align: center; padding: 10px 18px; border-radius: 20px; font-size: 0.9rem; }
             .main-content { padding: 15px; padding-bottom: 90px; }
         }
     </style>
@@ -70,7 +71,7 @@
         <div id="tab-dashboard" class="tab-content active">
             <div class="card-grid">
                 <div class="card" style="grid-column: 1 / -1;">
-                    <div class="card-header"><h3>ملخص إنجازات الموقع</h3></div>
+                    <div class="card-header"><h3>ملخص إنجازات المكتب</h3></div>
                     <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
                         <canvas id="activityChart"></canvas>
                     </div>
@@ -92,7 +93,7 @@
                 <div class="card" style="grid-column: 1 / -1;">
                     <div class="card-header"><h3>🏛️ السجل التاريخي للأعمال المنجزة</h3></div>
                     <p style="color: var(--text-muted); font-size: 0.9rem; font-weight: bold; margin-bottom: 15px;">
-                        يحتوي هذا السجل على كافة القرارات والمعاملات التي تم إغلاقها، مرتبة كمرجع تاريخي.
+                        يحتوي هذا السجل على كافة القرارات والمعاملات التي تم إغلاقها، مرتبة كمرجع تاريخي لمدير الموقع.
                     </p>
                     <ul class="data-list" id="history-list"></ul>
                 </div>
@@ -122,8 +123,8 @@
             const activeList = document.getElementById('active-list');
             const historyList = document.getElementById('history-list');
             let activeCount = 0; let historyCount = 0; let docsCount = dbData.sysDocs ? dbData.sysDocs.length : 0;
+            let contactsCount = dbData.sysContacts ? dbData.sysContacts.length : 0;
 
-            // إذا لم يكن هناك بيانات
             activeList.innerHTML = '';
             historyList.innerHTML = '';
 
@@ -153,7 +154,15 @@
                 });
             }
             
-            if(activeCount === 0) activeList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:bold;">لا توجد مهام قيد التنفيذ حالياً.</div>';
+            // إضافة الاجتماعات القادمة للمهام القائمة
+            if(dbData.sysMeetings) {
+                dbData.sysMeetings.forEach(m => {
+                    activeList.innerHTML += `<li><div class="item-details"><div class="item-title">${m.title}</div><div class="item-meta">📅 ${m.date} | 🕒 ${m.time} <br> 📌 ${m.agenda}</div></div><span class="badge badge-info">اجتماع مجدول</span></li>`;
+                    activeCount++;
+                });
+            }
+            
+            if(activeCount === 0) activeList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:bold;">لا توجد مهام أو اجتماعات قيد التنفيذ حالياً.</div>';
             if(historyCount === 0) historyList.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:bold;">السجل التاريخي فارغ حالياً.</div>';
 
             // رسم المخطط
@@ -161,10 +170,10 @@
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['المهام القائمة', 'الأرشيف التاريخي المنجز', 'المستندات المؤرشفة'],
+                    labels: ['المهام والاجتماعات القائمة', 'الأرشيف التاريخي المنجز', 'المستندات المؤرشفة', 'الزوار والاتصالات'],
                     datasets: [{ 
-                        data: [activeCount, historyCount, docsCount], 
-                        backgroundColor: ['#f59e0b', '#10b981', '#3b82f6'], 
+                        data: [activeCount, historyCount, docsCount, contactsCount], 
+                        backgroundColor: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'], 
                         borderWidth: 0,
                         hoverOffset: 4
                     }]
@@ -173,7 +182,7 @@
                     responsive: true, 
                     maintainAspectRatio: false, 
                     plugins: { 
-                        legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 14 } } } 
+                        legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 13, weight: 'bold' } } } 
                     } 
                 }
             });
